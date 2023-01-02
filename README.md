@@ -6,13 +6,13 @@ Online materials for HOL Light
 | HOL Light                           | Coq                                                                                                                                                                |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ABBREV_TAC \`x=t\`                    |  `remember t as x`                                                                                                                                                 |
-| ABS_TAC                             |  `extensionality` in   Coq.Logic.FunctionalExtensionality                                                                                                          |
+| ABS_TAC                             |  `extensionality` in Coq.Logic.FunctionalExtensionality                                                                                                          |
 | ACCEPT_TAC thm                      |  `exact thm`                                                                                                                                                       |
 | ALL_TAC                             |  `idtac` without a user message                                                                                                                                    |
-| ANTS_TAC                            |  If the goal conclusion is `(p   ==> q) ==> r`, this is equivalent to `assert (H: p). { (subgoal) } intros HIMPLY. apply HIMPLY in H. generalize H`           |
+| ANTS_TAC                            |  If the goal conclusion is `(p ==> q) ==> r`, this is equivalent to `assert (H: p). { (subgoal) } intros HIMPLY. apply HIMPLY in H. generalize H`           |
 | AP_TERM_TAC                         |  `f_equal`                                                                                                                                                         |
 | AP_THM_TAC                          |  `apply equal_f`                                                                                                                                                   |
-| ARITH_TAC                           |  Properly apply solvers in   Micromega (`lia`, `nia`, …). Sometimes `nia` can solve a goal that ARITH_TAC   cannot (e.g., x*x-x = x*(x-1)).                        |
+| ARITH_TAC                           |  Properly apply solvers in   Micromega (`lia`, `nia`, …). Sometimes `nia` can solve a goal that ARITH_TAC   cannot (e.g., `x*x-x = x*(x-1)`).                        |
 | ASM_CASES_TAC   tm                  |  Given `Axiom excluded_middle_axiom = forall P, P \/ ~P`, `assert (H_ANON := excluded_middle_axiom tm). destruct H_ANON as [H2 \| H2]; generalize H2.`         |
 | ASM_MESON_TAC[thm list]             |  See MESON_TAC.                                                                                                                                                    |
 | ASM_REWRITE_TAC[thm list]           |  See REWRITE_TAC.                                                                                                                                                  |
@@ -42,10 +42,12 @@ Online materials for HOL Light
 | STRIP_TAC                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
 | SUBGOAL_THEN tm ASSUME_TAC          |  `cut tm. intros HASSUME`, or `assert (HASSUME: tm)` with a swapped subgoal order                                                                               |
 | TRY tac                             |  `try tac`                                                                                                                                                         |
-| tac THEN tac                        |  `;`                                                                                                                                                               |
-| tac THENL [tac list]                |  `. { tac[0]. } { tac[1]. } …`                                                                                                                                     |
+| tac THEN tac                        |  `tac; tac`                                                                                                                                                               |
+| tac THENL [tac list]                |  `tac. { tac[0]. } { tac[1]. } …`                                                                                                                                     |
 | UNDISCH_TAC                         |  `generalize` for a prop.                                                                                                                                          |
 | X_GEN_TAC t                         |  `intro t`, but targets non-propositions only                                                                                                                    |
 | X_META_EXISTS_TAC \`x:ty\`            | `eexists`. Set the name of the meta variable to `x`.                                                                                                               |
 
 - HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, EXPAND_TAC s, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list], USE_THEN s ttac
+
+- Frequently used Coq tactics that are not matched yet: `destruct`, `inversion`, `admit`, `eapply`, `focus`
