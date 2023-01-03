@@ -22,6 +22,7 @@ Online materials for HOL Light:
 | ASSUME_TAC   thm                    |  `assert (H_ANON := thm)`                                                                                                                                          |
 | BETA_TAC                            |  `cbv beta`                                                                                                                                                        |
 | CONJ_TAC                            |  `split` of a conjunction conclusion only                                                                                                                             |
+| DESTRUCT_TAC                            |  `destruct`, but with a slightly different syntax (see [the doc.](https://github.com/jrh13/hol-light/blob/master/Help/DESTRUCT_TAC.doc))                                                                                                                             |
 | DISCH_TAC                           |  `intro`, but moves an assumption only                                                                                                                           |
 | DISJ1_TAC                           |  `left`                                                                                                                                                            |
 | DISJ2_TAC                           |  `right`                                                                                                                                                           |
@@ -29,6 +30,7 @@ Online materials for HOL Light:
 | EXISTS_TAC                          |  `exists`                                                                                                                                                          |
 | GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
 | INDUCT_TAC                          |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have 'num' type ('nat' in   Coq).                                         |
+| INTRO_TAC                          |  `intros` + `destruct` of conjunctions                                         |
 | LABEL_TAC s thm                     |  `assert (s := thm)`                                                                                                                                               |
 | LABEL_TAC s (SPECL [t0;t1;…]   thm) |  `specialize (thm t0 t1 …) as s`                                                                                                                                   |
 | LIST_INDUCT_TAC                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
@@ -53,4 +55,4 @@ Online materials for HOL Light:
 
 - HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, EXPAND_TAC s, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list], USE_THEN s ttac
 
-- Frequently used Coq tactics that are not matched yet: `destruct`, `inversion`, `admit`, `eapply`, `focus`
+- Frequently used Coq tactics that are not matched yet: `inversion`, `admit`, `eapply`, `focus`
