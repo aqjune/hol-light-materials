@@ -30,7 +30,7 @@ Online materials for HOL Light:
 | EXISTS_TAC                          |  `exists`                                                                                                                                                          |
 | GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
 | INDUCT_TAC                          |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have 'num' type ('nat' in   Coq).                                         |
-| INTRO_TAC                          |  `intros` + `destruct` of conjunctions                                         |
+| INTRO_TAC                          |  `intros` + `destruct` of dis/conjunctions                                         |
 | LABEL_TAC s thm                     |  `assert (s := thm)`                                                                                                                                               |
 | LABEL_TAC s (SPECL [t0;t1;…]   thm) |  `specialize (thm t0 t1 …) as s`                                                                                                                                   |
 | LIST_INDUCT_TAC                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
