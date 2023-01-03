@@ -28,6 +28,7 @@ Online materials for HOL Light:
 | DISJ2_TAC                           |  `right`                                                                                                                                                           |
 | EQ_TAC                              |  `split` for an iff conclusion only                                                                                                                                      |
 | EXISTS_TAC                          |  `exists`                                                                                                                                                          |
+| FIX_TAC                          | No matching tactic in Coq (correct me if I am wrong)                                                                                                                                                          |
 | GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
 | INDUCT_TAC                          |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have 'num' type ('nat' in   Coq).                                         |
 | INTRO_TAC                          |  `intros` + `destruct` of dis/conjunctions                                         |
