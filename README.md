@@ -88,6 +88,7 @@ type thm_tactic = thm -> tactic;;
 | SPEC_TAC(\`x:ty1\`, \`y:ty2\`)          |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
 | STRIP_TAC                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
 | SUBGOAL_THEN tm ASSUME_TAC          |  `cut tm. intros HASSUME`, or `assert (HASSUME: tm)` with a swapped subgoal order                                                                               |
+| SUBGOAL_THEN tm (LABEL_TAC "name")  |  `cut tm. intros name`, or `assert (name: tm)` with a swapped subgoal order                                                                               |
 | TRY tac                             |  `try tac`                                                                                                                                                         |
 | tac THEN tac                        |  `tac; tac`                                                                                                                                                               |
 | tac THENL [tac list]                |  `tac. { tac[0]. } { tac[1]. } …`                                                                                                                                     |
