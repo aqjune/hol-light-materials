@@ -57,3 +57,14 @@ Online materials for HOL Light:
 - HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, EXPAND_TAC s, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list], USE_THEN s ttac
 
 - Frequently used Coq tactics that are not matched yet: `inversion`, `admit`, `eapply`, `focus`
+
+## Commands in HOL Light vs. Coq
+
+| HOL Light                           | Coq                                                                                                                                                                |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| help "<keyword>"      | ?                |
+| loadt "path"          | `Load "path"`    |
+| search [name "ASSOC"] | `Search "ASSOC"` |
+| search [\`nat\`]      | `Search nat`     |
+| type_of \`term\`      | `Check term`     |
+
