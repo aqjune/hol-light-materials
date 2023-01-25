@@ -60,7 +60,7 @@ type thm_tactic = thm -> tactic;;
 | ASM_REWRITE_TAC[thm list]           |  See REWRITE_TAC.                                                                                                                                                  |
 | ASSUME_TAC   thm                    |  `assert (H_ANON := thm)`                                                                                                                                          |
 | BETA_TAC                            |  `cbv beta`                                                                                                                                                        |
-| CHOOSE_TAC thm                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct thm`. |
+| CHOOSE_TAC thm                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct HANON`. |
 | CONJ_TAC                            |  `split` of a conjunction conclusion only                                                                                                                             |
 | CHEAT_TAC                           |  `admit` |
 | DESTRUCT_TAC                            |  `destruct`, but with a slightly different syntax (see [the doc.](https://github.com/jrh13/hol-light/blob/master/Help/DESTRUCT_TAC.doc))                                                                                                                             |
