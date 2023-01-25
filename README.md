@@ -84,6 +84,7 @@ type thm_tactic = thm -> tactic;;
 | REFL_TAC                            |  `reflexivity`, but REFL_TAC only   checks syntactic equivalence (e.g. x = 0 + x cannot be proved)                                                                 |
 | REPEAT                              |  `repeat`                                                                                                                                                          |
 | REWRITE_TAC [thm list]              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
+| REWRITE_TAC [GSYM thm]              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
 | SIMP_TAC [thm list]                 |  Maybe `simpl` in Coq, but does not immediately look into definitions. Therefore, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints.          |
 | SPEC_TAC(\`x:ty1\`, \`y:ty2\`)          |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
 | STRIP_TAC                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
