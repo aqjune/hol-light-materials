@@ -62,6 +62,9 @@ type thm_tactic = thm -> tactic;;
 | BETA_TAC                            |  `cbv beta`                                                                                                                                                        |
 | CHOOSE_TAC thm                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct HANON`. |
 | CONJ_TAC                            |  `split` of a conjunction conclusion only                                                                                                                             |
+| CONS_11                             |  `destruct` for list |
+| CONV_TAC NUM_REDUCE_CONV            |  `simpl` for natural numbers |
+| CONV_TAC INT_REDUCE_CONV            |  `simpl` for ints |
 | CHEAT_TAC                           |  `admit` |
 | DESTRUCT_TAC                            |  `destruct`, but with a slightly different syntax (see [the doc.](https://github.com/jrh13/hol-light/blob/master/Help/DESTRUCT_TAC.doc))                                                                                                                             |
 | DISCH_TAC                           |  `intro`, but moves an assumption only                                                                                                                           |
@@ -78,6 +81,7 @@ type thm_tactic = thm -> tactic;;
 | LIST_INDUCT_TAC                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
 | MATCH_MP_TAC                        |  `apply`                                                                                                                                                           |
 | MESON_TAC[thm list]                 |  `firstorder` with thms registered   to hint databases. Unlike ASM_MESON_TAC, this does not use assumptions.                                                       |
+| NO_TAC                              |  `fail`   |
 | ONCE_REWRITE_TAC[thm list]          |  `rewrite` but rewrites only once.                                                                                                                                 |
 | tac ORELSE tac                      |  `orelse` in Ltac2?                                                                                                                                                |
 | REAL_ARITH_TAC                      |  `lra`?                                                                                                                                                            |
