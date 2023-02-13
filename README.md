@@ -69,6 +69,7 @@ type thm_tactic = thm -> tactic;;
 | DESTRUCT_TAC                            |  `destruct`, but with a slightly different syntax (see [the doc.](https://github.com/jrh13/hol-light/blob/master/Help/DESTRUCT_TAC.doc))                                                                                                                             |
 | DISCH_TAC                           |  `intro`, but moves an assumption only                                                                                                                           |
 | DISCH_THEN(LABEL_TAC "Hname")       |  `intro Hname` |
+| DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE\[MOD_EQ_0\] | `intro Hname. rewrite MOD_EQ_0 in Hname` |
 | DISJ1_TAC                           |  `left`                                                                                                                                                            |
 | DISJ2_TAC                           |  `right`                                                                                                                                                           |
 | EQ_TAC                              |  `split` for an iff conclusion only                                                                                                                                      |
