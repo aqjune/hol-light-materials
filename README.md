@@ -70,6 +70,7 @@ type thm_tactic = thm -> tactic;;
 | DISCH_TAC                           |  `intro`, but moves an assumption only                                                                                                                           |
 | DISCH_THEN(LABEL_TAC "Hname")       |  `intro Hname` |
 | DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE\[MOD_EQ_0\] | `intro Hname. rewrite MOD_EQ_0 in Hname` |
+| DISJ_CASES_TAC thm                  |  `destruct` for disjunction |
 | DISJ1_TAC                           |  `left`                                                                                                                                                            |
 | DISJ2_TAC                           |  `right`                                                                                                                                                           |
 | EQ_TAC                              |  `split` for an iff conclusion only                                                                                                                                      |
@@ -106,6 +107,18 @@ type thm_tactic = thm -> tactic;;
 - HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, EXPAND_TAC s, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list], USE_THEN s ttac
 
 - Frequently used Coq tactics that are not matched yet: `inversion`, `eapply`
+
+### Examples
+
+```ocaml
+(* Given n:nat, do destruct n as [ | S n'] *)
+DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
+```
+
+```ocaml
+(* Calculate 1 + 2 - 3 *)
+NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *)
+```
 
 ## Commands in HOL Light vs. Coq
 
