@@ -115,5 +115,6 @@ type thm_tactic = thm -> tactic;;
 | loadt "path"          | `Load "path"`    |
 | search [name "ASSOC"] | `Search "ASSOC"` |
 | search [\`nat\`]      | `Search nat`     |
+| search [\`x + y\`]    | `Search` with the pattern |
 | type_of \`term\`      | `Check term`     |
-
+| print_goalstack (!current_goalstack) | Prints the current goal stack. |
