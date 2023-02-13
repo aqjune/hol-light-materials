@@ -82,7 +82,8 @@ type thm_tactic = thm -> tactic;;
 | LABEL_TAC s thm                     |  `assert (s := thm)`                                                                                                                                               |
 | LABEL_TAC s (SPECL [t0;t1;…]   thm) |  `specialize (thm t0 t1 …) as s`                                                                                                                                   |
 | LIST_INDUCT_TAC                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
-| MATCH_MP_TAC                        |  `apply`                                                                                                                                                           |
+| MATCH_MP_TAC thm                    |  `apply`, but the applying thm must be of the form `P ==> Q` |
+| MATCH_ACCEPT_TAC thm                |  `apply` |
 | MESON_TAC[thm list]                 |  `firstorder` with thms registered   to hint databases. Unlike ASM_MESON_TAC, this does not use assumptions.                                                       |
 | NO_TAC                              |  `fail`   |
 | ONCE_REWRITE_TAC[thm list]          |  `rewrite` but rewrites only once.                                                                                                                                 |
