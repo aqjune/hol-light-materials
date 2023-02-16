@@ -77,6 +77,7 @@ type thm_tactic = thm -> tactic;;
 | EXISTS_TAC                          |  `exists`                                                                                                                                                          |
 | FIX_TAC                          | No matching tactic in Coq (correct me if I am wrong)                                                                                                                                                          |
 | GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
+| IMP_REWRITE_TAC[thm list]           |  Given a list of theorems that look like `P ==> l = r`, do `rewrite` and add `P` to the goal as a conjunction. If the rewritten part is at `P'` of some other implication `P' ==> Q'`, `P` is added as `(P ==> P'[l/r]) ==> Q`. |
 | INDUCT_TAC                          |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have 'num' type ('nat' in   Coq).                                         |
 | INTRO_TAC                          |  `intros` + `destruct` of dis/conjunctions                                         |
 | LABEL_TAC s thm                     |  `assert (s := thm)`                                                                                                                                               |
