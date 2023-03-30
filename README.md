@@ -95,6 +95,7 @@ type thm_tactic = thm -> tactic;;
 | REPEAT                              |  `repeat`                                                                                                                                                          |
 | REWRITE_TAC [thm list]              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
 | REWRITE_TAC [GSYM thm]              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
+| RULE_ASSUM_TAC (fn:thm->thm)        |  Perform fn to every assumption. |
 | SIMP_TAC [thm list]                 |  Maybe `simpl` in Coq, but does not immediately look into definitions. Therefore, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints.          |
 | SPEC_TAC(\`x:ty1\`, \`y:ty2\`)          |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
 | STRIP_TAC                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
@@ -121,6 +122,11 @@ DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
 ```ocaml
 (* Calculate 1 + 2 - 3 *)
 NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *)
+```
+
+```ocaml
+(* Apply the DIMINDEX_32 rewrite rule to every assumption. *)
+RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 ```
 
 ## Commands in HOL Light vs. Coq
