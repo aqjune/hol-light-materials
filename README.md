@@ -139,6 +139,10 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
 ```
 
+## Useful Conversions
+
+- MOD_DOWN_CONV
+
 ## Commands in HOL Light vs. Coq
 
 | HOL Light                           | Coq                                                                                                                                                                |
