@@ -45,8 +45,8 @@ type thm_tactic = thm -> tactic;;
 
 ## Tactics in HOL Light vs. Coq
 
-| HOL Light                           | Coq                                                                                                                                                                |
-|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| HOL Light                           | Coq                                                                                                                                                                | Doc |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
 | ABBREV_TAC \`x=t\`                    |  `remember t as x`                                                                                                                                                 |
 | ABS_TAC                             |  `extensionality` in Coq.Logic.FunctionalExtensionality                                                                                                          |
 | ACCEPT_TAC thm                      |  `exact thm`                                                                                                                                                       |
@@ -75,6 +75,7 @@ type thm_tactic = thm -> tactic;;
 | DISJ2_TAC                           |  `right`                                                                                                                                                           |
 | EQ_TAC                              |  `split` for an iff conclusion only                                                                                                                                      |
 | EXISTS_TAC                          |  `exists`                                                                                                                                                          |
+| EXPAND_TAC s                        |  `rewrite <- H` where `H` is `t = s` | [EXPAND_TAC](https://github.com/jrh13/hol-light/blob/master/Help/EXPAND_TAC.doc) |
 | FIX_TAC                          | No matching tactic in Coq (correct me if I am wrong)                                                                                                                                                          |
 | GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
 | IMP_REWRITE_TAC[thm list]           |  Given a list of theorems that look like `P ==> l = r`, do `rewrite` and add `P` to the goal as a conjunction. If the rewritten part is at `P'` of some other implication `P' ==> Q'`, `P` is added as `(P ==> P'[l/r]) ==> Q`. |
