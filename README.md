@@ -129,6 +129,16 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 ```
 
+## Inference Rules
+
+#### Examples
+
+```ocaml
+(* Get the LHS of DIVISION_SIMP which is thm `|- (!m n. m DIV n * n + m MOD n = m) /\ (!m n. n * m DIV n + m MOD n = m)`,
+   and specialize it. *)
+SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
+```
+
 ## Commands in HOL Light vs. Coq
 
 | HOL Light                           | Coq                                                                                                                                                                |
