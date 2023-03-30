@@ -82,7 +82,7 @@ type thm_tactic = thm -> tactic;;
 | INTRO_TAC                          |  `intros` + `destruct` of dis/conjunctions                                         |
 | LABEL_TAC s thm                     |  `assert (s := thm)`                                                                                                                                               |
 | LABEL_TAC s (SPECL [t0;t1;…]   thm) |  `specialize (thm t0 t1 …) as s`                                                                                                                                   |
-| LABEL_TAC s (ISPECL [`x:(32)word`;…]   thm) |  `specialize (thm t0 t1 …) as s` with type instantiations |
+| LABEL_TAC s (ISPECL [\`x:(32)word\`;…]   thm) |  `specialize (thm t0 t1 …) as s` with type instantiations |
 | LIST_INDUCT_TAC                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
 | MATCH_MP_TAC thm                    |  `apply`, but the applying thm must be of the form `P ==> Q` |
 | MATCH_ACCEPT_TAC thm                |  `apply` |
