@@ -135,6 +135,7 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 | HOL Light                           | Coq                                                                                                                                                                | Doc |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
 | MP P Q  | `P Q` where `P` is `Prop -> Prop`, `Q` is Prop | [MP](https://github.com/jrh13/hol-light/blob/master/Help/MP.doc) |
+| MATCH_MP P Q | equivalent to MP P Q, but instantiates quantified variables | [MATCH_MP](https://github.com/jrh13/hol-light/blob/master/Help/MATCH_MP.doc) |
 
 #### Examples
 
@@ -145,7 +146,9 @@ SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
 ```
 
 ```ocaml
-e(MAP_EVERY ASSUME_TAC (CONJUNCTS ((MP (SPECL [`x:num`; `2 EXP 32:num`] DIVISION) (ARITH_RULE `~(2 EXP 32 = 0)`)))))
+(* Pick an assumption "Hx0lt" (which becomes the 'thm' variable), and rewrite the goal using an equation
+   'MATCH_MP add_64_32_mod_32_eq thm'. Note that add_64_32_mod_32_eq is some P -> Q, and thm is matched to P. *)
+e(USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm]));;
 ```
 
 ## Useful Conversions
