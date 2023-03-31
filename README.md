@@ -144,6 +144,10 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
 ```
 
+```ocaml
+e(MAP_EVERY ASSUME_TAC (CONJUNCTS ((MP (SPECL [`x:num`; `2 EXP 32:num`] DIVISION) (ARITH_RULE `~(2 EXP 32 = 0)`)))))
+```
+
 ## Useful Conversions
 
 - MOD_DOWN_CONV
