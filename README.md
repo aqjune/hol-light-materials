@@ -47,7 +47,7 @@ type thm_tactic = thm -> tactic;;
 
 | HOL Light                           | Coq                                                                                                                                                                | Doc |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
-| ABBREV_TAC \`x=t\`                    |  `remember t as x`                                                                                                                                                 |
+| ABBREV_TAC \`x=t\`                    |  `remember t as x` and replace `t` with `x`. | [ABBREV_TAC](https://github.com/jrh13/hol-light/blob/master/Help/ABBREV_TAC.doc) |
 | ABS_TAC                             |  `extensionality` in Coq.Logic.FunctionalExtensionality                                                                                                          |
 | ACCEPT_TAC thm                      |  `exact thm`                                                                                                                                                       |
 | ALL_TAC                             |  `idtac` without a user message                                                                                                                                    |
