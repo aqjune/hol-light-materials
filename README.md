@@ -106,10 +106,11 @@ type thm_tactic = thm -> tactic;;
 | tac THEN tac                        |  `tac; tac`                                                                                                                                                               |
 | tac THENL [tac list]                |  `tac. { tac[0]. } { tac[1]. } …`                                                                                                                                     |
 | UNDISCH_TAC                         |  `generalize` for a prop.                                                                                                                                          |
+| USE_THEN s ttac   | Given an assumption whose name is s, apply ttac which should be analogous to `fun thm -> (*tactic*)`. | [USE_THEN](https://github.com/jrh13/hol-light/blob/master/Help/USE_THEN.doc) |
 | X_GEN_TAC t                         |  `intro t`, but targets non-propositions only                                                                                                                    |
 | X_META_EXISTS_TAC \`x:ty\`            | `eexists`. Set the name of the meta variable to `x`.                                                                                                               |
 
-- HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, EXPAND_TAC s, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list], USE_THEN s ttac
+- HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list]
 
 - Frequently used Coq tactics that are not matched yet: `inversion`, `eapply`
 
