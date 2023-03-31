@@ -131,6 +131,12 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 ```
 
+```ocaml
+(* Pick an assumption "Hx0lt" (which becomes the 'thm' variable), and rewrite the goal using an equation
+   'MATCH_MP add_64_32_mod_32_eq thm'. Note that add_64_32_mod_32_eq is some P -> Q, and thm is matched to P. *)
+USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm])
+```
+
 ## Inference Rules
 
 | HOL Light                           | Coq                                                                                                                                                                | Doc |
@@ -144,12 +150,6 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 (* Get the LHS of DIVISION_SIMP which is thm `|- (!m n. m DIV n * n + m MOD n = m) /\ (!m n. n * m DIV n + m MOD n = m)`,
    and specialize it. *)
 SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
-```
-
-```ocaml
-(* Pick an assumption "Hx0lt" (which becomes the 'thm' variable), and rewrite the goal using an equation
-   'MATCH_MP add_64_32_mod_32_eq thm'. Note that add_64_32_mod_32_eq is some P -> Q, and thm is matched to P. *)
-e(USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm]));;
 ```
 
 ## Useful Conversions
