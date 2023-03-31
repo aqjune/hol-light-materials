@@ -132,6 +132,10 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 
 ## Inference Rules
 
+| HOL Light                           | Coq                                                                                                                                                                | Doc |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
+| MP P Q  | `P Q` where `P` is `Prop -> Prop`, `Q` is Prop | [MP](https://github.com/jrh13/hol-light/blob/master/Help/MP.doc) |
+
 #### Examples
 
 ```ocaml
