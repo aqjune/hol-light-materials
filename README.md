@@ -88,6 +88,7 @@ type thm_tactic = thm -> tactic;;
 | MATCH_MP_TAC thm                    |  `apply`, but the applying thm must be of the form `P ==> Q` |
 | MATCH_ACCEPT_TAC thm                |  `apply` |
 | MESON_TAC[thm list]                 |  `firstorder` with thms registered   to hint databases. Unlike ASM_MESON_TAC, this does not use assumptions.                                                       |
+| MP_TAC thm | `assert (s := thm). generalize thm` | [MP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/MP_TAC.doc) |
 | NO_TAC                              |  `fail`   |
 | ONCE_REWRITE_TAC[thm list]          |  `rewrite` but rewrites only once.                                                                                                                                 |
 | tac ORELSE tac                      |  `orelse` in Ltac2?                                                                                                                                                |
@@ -135,6 +136,11 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 (* Pick an assumption "Hx0lt" (which becomes the 'thm' variable), and rewrite the goal using an equation
    'MATCH_MP add_64_32_mod_32_eq thm'. Note that add_64_32_mod_32_eq is some P -> Q, and thm is matched to P. *)
 USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm])
+```
+
+```ocaml
+(* Pick an assumption "H" and generalize it. *)
+USE_THEN "H" MP_TAC
 ```
 
 ## Inference Rules
