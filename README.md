@@ -149,6 +149,7 @@ USE_THEN "H" MP_TAC
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
 | MP P Q  | `P Q` where `P` is `Prop -> Prop`, `Q` is Prop | [MP](https://github.com/jrh13/hol-light/blob/master/Help/MP.doc) |
 | MATCH_MP P Q | equivalent to MP P Q, but instantiates quantified variables | [MATCH_MP](https://github.com/jrh13/hol-light/blob/master/Help/MATCH_MP.doc) |
+| REWRITE_RULE [thms] thm | Given thm, return a new theorem that has thms rewritten in it | [REWRITE_RULE](https://github.com/jrh13/hol-light/blob/master/Help/REWRITE_RULE.doc) |
 
 #### Examples
 
@@ -156,6 +157,12 @@ USE_THEN "H" MP_TAC
 (* Get the LHS of DIVISION_SIMP which is thm `|- (!m n. m DIV n * n + m MOD n = m) /\ (!m n. n * m DIV n + m MOD n = m)`,
    and specialize it. *)
 SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
+```
+
+```ocaml
+(* Given a theorem VAL_MOD_REFL, (1) specialize it with the `y` variable, and (2) rewrite the theorem using
+   the DIMINDEX_32 theorem. *)
+REWRITE_RULE [DIMINDEX_32] (ISPECL [`y:(32)word`] VAL_MOD_REFL)
 ```
 
 ## Useful Conversions
