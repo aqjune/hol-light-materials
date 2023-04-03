@@ -123,11 +123,6 @@ DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
 ```
 
 ```ocaml
-(* Calculate 1 + 2 - 3 *)
-NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *)
-```
-
-```ocaml
 (* Apply the DIMINDEX_32 rewrite rule to every assumption. *)
 RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 ```
@@ -168,6 +163,12 @@ REWRITE_RULE [DIMINDEX_32] (ISPECL [`y:(32)word`] VAL_MOD_REFL)
 ## Useful Conversions
 
 - MOD_DOWN_CONV
+- NUM_REDUCE_CONV
+
+```ocaml
+(* Calculate 1 + 2 - 3 *)
+NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *)
+```
 
 ## Commands in HOL Light vs. Coq
 
