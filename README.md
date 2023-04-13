@@ -191,3 +191,10 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 If some tactic produces multiple subgoals, the beginning of each subgoal must be itemized with `- ` and the following
 lines must have extra indentations. Currently, the indentation string is fixed to two spaces (`  `).
 `thenify_test_input.txt` has an example and `thenify.py thenify_test_input.txt` shows the then-ified output. :)
+
+### Others
+
+```ocaml
+(* Given an OCaml string 'name' and term 'tm', make a definition `name = tm` *)
+new_definition (mk_eq (mk_var (name, `:(..type..)`), tm))
+```
