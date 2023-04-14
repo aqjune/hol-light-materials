@@ -55,7 +55,7 @@ type thm_tactic = thm -> tactic;;
 | `AP_TERM_TAC`                         |  `f_equal`                                                                                                                                                         |
 | `AP_THM_TAC`                          |  `apply equal_f`                                                                                                                                                   |
 | ``ARITH_TAC``                           |  Properly apply solvers in   Micromega (`lia`, `nia`, …). Sometimes `nia` can solve a goal that ARITH_TAC   cannot (e.g., `x*x-x = x*(x-1)`).                        |
-| A`SM_CASES_TAC   tm`                  |  Given `Axiom excluded_middle_axiom = forall P, P \/ ~P`, `assert (H_ANON := excluded_middle_axiom tm). destruct H_ANON as [H2 \| H2]; generalize H2.`         |
+| `ASM_CASES_TAC tm`                  |  Given `Axiom excluded_middle_axiom = forall P, P \/ ~P`, `assert (H_ANON := excluded_middle_axiom tm). destruct H_ANON as [H2 \| H2]; generalize H2.`         |
 | `ASM_MESON_TAC[thm list]`             |  See MESON_TAC.                                                                                                                                                    |
 | `ASM_REWRITE_TAC[thm list]`           |  See REWRITE_TAC.                                                                                                                                                  |
 | `ASSUME_TAC thm`                    |  `assert (H_ANON := thm)`                                                                                                                                          |
