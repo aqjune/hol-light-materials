@@ -76,6 +76,7 @@ type thm_tactic = thm -> tactic;;
 | EQ_TAC                              |  `split` for an iff conclusion only                                                                                                                                      |
 | EXISTS_TAC                          |  `exists`                                                                                                                                                          |
 | EXPAND_TAC s                        |  `rewrite <- H` where `H` is `t = s` | [EXPAND_TAC](https://github.com/jrh13/hol-light/blob/master/Help/EXPAND_TAC.doc) |
+| FIRST_ASSUM ttac | ? | [FIRST_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIRST_ASSUM.doc) |
 | FIX_TAC                          | No matching tactic in Coq (correct me if I am wrong)                                                                                                                                                          |
 | GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
 | IMP_REWRITE_TAC[thm list]           |  Given a list of theorems that look like `P ==> l = r`, do `rewrite` and add `P` to the goal as a conjunction. If the rewritten part is at `P'` of some other implication `P' ==> Q'`, `P` is added as `(P ==> P'[l/r]) ==> Q`. Thos also works for theorems that look like `P ==> l1 = r1 /\ l2 = r2 /\ ..` | [IMP_REWRITE_TAC](https://github.com/jrh13/hol-light/blob/master/Help/IMP_REWRITE_TAC.doc) |
@@ -111,7 +112,7 @@ type thm_tactic = thm -> tactic;;
 | X_GEN_TAC t                         |  `intro t`, but targets non-propositions only                                                                                                                    |
 | X_META_EXISTS_TAC \`x:ty\`            | `eexists`. Set the name of the meta variable to `x`.                                                                                                               |
 
-- HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, DISCH_THEN ttac, EVERY_ASSUM ttac, FIRST_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list]
+- HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, EVERY_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list]
 
 - Frequently used Coq tactics that are not matched yet: `inversion`, `eapply`
 
@@ -136,6 +137,29 @@ USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm])
 ```ocaml
 (* Pick an assumption "H" and generalize it. *)
 USE_THEN "H" MP_TAC
+```
+
+### Useful Custom Tactics
+
+#### Goal Printer
+
+```ocaml
+let PRINT_GOAL_TAC (desc: string): tactic = fun gl -> let _ = Printf.printf "<%s>\n" desc; print_goal gl in ALL_TAC gl;;
+```
+
+#### `note`
+
+https://cr.yp.to/2023/holhull-20230406.sage has this `note` tactic that is very handy when you want to add an assumption that can be concluded from a set of rewrite rules 
+```ocaml
+let notetac t tac = SUBGOAL_THEN t MP_TAC THENL
+[tac;
+  ALL_TAC] THEN
+DISCH_THEN(fun th -> ASSUME_TAC th);;
+
+let note t why = notetac t(ASM_MESON_TAC why);;
+  
+(* usage *)
+note `1 + 2 = 2 + 1` [ADD_SYM] THEN ...
 ```
 
 ## Inference Rules
@@ -197,17 +221,4 @@ lines must have extra indentations. Currently, the indentation string is fixed t
 ```ocaml
 (* Given an OCaml string 'name' and term 'tm', make a definition `name = tm` *)
 new_definition (mk_eq (mk_var (name, `:(..type..)`), tm))
-```
-
-https://cr.yp.to/2023/holhull-20230406.sage has this `note` tactic that is very handy when you want to add an assumption that can be concluded from a set of rewrite rules 
-```ocaml
-let notetac t tac = SUBGOAL_THEN t MP_TAC THENL
-[tac;
-  ALL_TAC] THEN
-DISCH_THEN(fun th -> ASSUME_TAC th);;
-
-let note t why = notetac t(ASM_MESON_TAC why);;
-  
-(* usage *)
-note `1 + 2 = 2 + 1` [ADD_SYM] THEN ...
 ```
