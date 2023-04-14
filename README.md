@@ -47,86 +47,98 @@ type thm_tactic = thm -> tactic;;
 
 | HOL Light                           | Coq                                                                                                                                                                | Doc |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
-| ABBREV_TAC \`x=t\`                    |  `remember t as x` and replace `t` with `x`. | [ABBREV_TAC](https://github.com/jrh13/hol-light/blob/master/Help/ABBREV_TAC.doc) |
-| ABS_TAC                             |  `extensionality` in Coq.Logic.FunctionalExtensionality                                                                                                          |
-| ACCEPT_TAC thm                      |  `exact thm`                                                                                                                                                       |
-| ALL_TAC                             |  `idtac` without a user message                                                                                                                                    |
-| ANTS_TAC                            |  If the goal conclusion is `(p ==> q) ==> r`, this is equivalent to `assert (H: p). { (subgoal) } intros HIMPLY. apply HIMPLY in H. generalize H`           |
-| AP_TERM_TAC                         |  `f_equal`                                                                                                                                                         |
-| AP_THM_TAC                          |  `apply equal_f`                                                                                                                                                   |
-| ARITH_TAC                           |  Properly apply solvers in   Micromega (`lia`, `nia`, …). Sometimes `nia` can solve a goal that ARITH_TAC   cannot (e.g., `x*x-x = x*(x-1)`).                        |
-| ASM_CASES_TAC   tm                  |  Given `Axiom excluded_middle_axiom = forall P, P \/ ~P`, `assert (H_ANON := excluded_middle_axiom tm). destruct H_ANON as [H2 \| H2]; generalize H2.`         |
-| ASM_MESON_TAC[thm list]             |  See MESON_TAC.                                                                                                                                                    |
-| ASM_REWRITE_TAC[thm list]           |  See REWRITE_TAC.                                                                                                                                                  |
-| ASSUME_TAC   thm                    |  `assert (H_ANON := thm)`                                                                                                                                          |
-| BETA_TAC                            |  `cbv beta`                                                                                                                                                        |
-| CHOOSE_TAC thm                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct HANON`. |
-| CONJ_TAC                            |  `split` of a conjunction conclusion only                                                                                                                             |
-| CONS_11                             |  `destruct` for list |
-| CONV_TAC NUM_REDUCE_CONV            |  `simpl` for natural numbers |
-| CONV_TAC INT_REDUCE_CONV            |  `simpl` for ints |
-| CHEAT_TAC                           |  `admit` |
-| DESTRUCT_TAC                            |  `destruct`, but with a slightly different syntax (see [the doc.](https://github.com/jrh13/hol-light/blob/master/Help/DESTRUCT_TAC.doc))                                                                                                                             |
-| DISCH_TAC                           |  `intro`, but moves an assumption only                                                                                                                           |
-| DISCH_THEN(LABEL_TAC "Hname")       |  `intro Hname` |
-| DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE\[MOD_EQ_0\] | `intro Hname. rewrite MOD_EQ_0 in Hname` |
-| DISJ_CASES_TAC thm                  |  `destruct` for disjunction |
-| DISJ1_TAC                           |  `left`                                                                                                                                                            |
-| DISJ2_TAC                           |  `right`                                                                                                                                                           |
-| EQ_TAC                              |  `split` for an iff conclusion only                                                                                                                                      |
-| EXISTS_TAC                          |  `exists`                                                                                                                                                          |
-| EXPAND_TAC s                        |  `rewrite <- H` where `H` is `t = s` | [EXPAND_TAC](https://github.com/jrh13/hol-light/blob/master/Help/EXPAND_TAC.doc) |
-| FIRST_ASSUM ttac | ? | [FIRST_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIRST_ASSUM.doc) |
-| FIX_TAC                          | No matching tactic in Coq (correct me if I am wrong)                                                                                                                                                          |
-| GEN_TAC                             |  `intro`, but targets   non-propositions only                                                                                                                      |
-| IMP_REWRITE_TAC[thm list]           |  Given a list of theorems that look like `P ==> l = r`, do `rewrite` and add `P` to the goal as a conjunction. If the rewritten part is at `P'` of some other implication `P' ==> Q'`, `P` is added as `(P ==> P'[l/r]) ==> Q`. Thos also works for theorems that look like `P ==> l1 = r1 /\ l2 = r2 /\ ..` | [IMP_REWRITE_TAC](https://github.com/jrh13/hol-light/blob/master/Help/IMP_REWRITE_TAC.doc) |
-| INDUCT_TAC                          |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have 'num' type ('nat' in   Coq).                                         |
-| INTRO_TAC                          |  `intros` + `destruct` of dis/conjunctions                                         |
-| LABEL_TAC s thm                     |  `assert (s := thm)`                                                                                                                                               |
-| LABEL_TAC s (SPECL [t0;t1;…]   thm) |  `specialize (thm t0 t1 …) as s`                                                                                                                                   |
-| LABEL_TAC s (ISPECL [\`x:(32)word\`;…]   thm) |  `specialize (thm t0 t1 …) as s` with type instantiations |
-| LIST_INDUCT_TAC                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
-| MATCH_MP_TAC thm                    |  `apply`, but the applying thm must be of the form `P ==> Q` |
-| MATCH_ACCEPT_TAC thm                |  `apply` |
-| MESON_TAC[thm list]                 |  `firstorder` with thms registered   to hint databases. Unlike ASM_MESON_TAC, this does not use assumptions.                                                       |
-| MP_TAC thm | `assert (s := thm). generalize thm` | [MP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/MP_TAC.doc) |
-| NO_TAC                              |  `fail`   |
-| ONCE_REWRITE_TAC[thm list]          |  `rewrite` but rewrites only once.                                                                                                                                 |
-| tac ORELSE tac                      |  `orelse` in Ltac2?                                                                                                                                                |
-| REAL_ARITH_TAC                      |  `lra`?                                                                                                                                                            |
-| REFL_TAC                            |  `reflexivity`, but REFL_TAC only   checks syntactic equivalence (e.g. x = 0 + x cannot be proved)                                                                 |
-| REPEAT                              |  `repeat`                                                                                                                                                          |
-| REWRITE_TAC [thm list]              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
-| REWRITE_TAC [GSYM thm]              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
-| RULE_ASSUM_TAC (fn:thm->thm)        |  Perform fn to every assumption. |
-| SIMP_TAC [thm list]                 |  REWRITE_TAC, but (1) applies intrinsic rewrite rules as well (basic_rewrites and basic_convs), and (2) accepts conditional rewrite rules of form `c ==> l = r`. The conditional rewrite rules are applied if `c` can be simplified into T. Different from `simpl` in Coq because it does not immediately look into the definitions. For example, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints. | [SIMP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/SIMP_TAC.doc) |
-| SPEC_TAC(\`x:ty1\`, \`y:ty2\`)          |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
-| STRIP_TAC                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
-| SUBGOAL_THEN tm ASSUME_TAC          |  `cut tm. intros HASSUME`, or `assert (HASSUME: tm)` with a swapped subgoal order                                                                               |
-| SUBGOAL_THEN tm (LABEL_TAC "name")  |  `cut tm. intros name`, or `assert (name: tm)` with a swapped subgoal order                                                                               |
-| TRY tac                             |  `try tac`                                                                                                                                                         |
-| tac THEN tac                        |  `tac; tac`                                                                                                                                                               |
-| tac THENL [tac list]                |  `tac. { tac[0]. } { tac[1]. } …`                                                                                                                                     |
-| UNDISCH_TAC                         |  `generalize` for a prop.                                                                                                                                          |
-| USE_THEN s ttac   | Given an assumption whose name is s, apply ttac which should be analogous to `fun thm -> (*tactic*)`. | [USE_THEN](https://github.com/jrh13/hol-light/blob/master/Help/USE_THEN.doc) |
-| X_GEN_TAC t                         |  `intro t`, but targets non-propositions only                                                                                                                    |
-| X_META_EXISTS_TAC \`x:ty\`            | `eexists`. Set the name of the meta variable to `x`.                                                                                                               |
+| `` ABBREV_TAC `x=t` ``                    |  `remember t as x` and replace `t` with `x`. | [ABBREV_TAC](https://github.com/jrh13/hol-light/blob/master/Help/ABBREV_TAC.doc) |
+| `ABS_TAC`                             |  `extensionality` in Coq.Logic.FunctionalExtensionality                                                                                                          |
+| `ACCEPT_TAC thm`                      |  `exact thm`                                                                                                                                                       |
+| `ALL_TAC`                             |  `idtac` without a user message                                                                                                                                    |
+| `ANTS_TAC`                            |  If the goal conclusion is `(p ==> q) ==> r`, this is equivalent to `assert (H: p). { (subgoal) } intros HIMPLY. apply HIMPLY in H. generalize H`           |
+| `AP_TERM_TAC`                         |  `f_equal`                                                                                                                                                         |
+| `AP_THM_TAC`                          |  `apply equal_f`                                                                                                                                                   |
+| ``ARITH_TAC``                           |  Properly apply solvers in   Micromega (`lia`, `nia`, …). Sometimes `nia` can solve a goal that ARITH_TAC   cannot (e.g., `x*x-x = x*(x-1)`).                        |
+| A`SM_CASES_TAC   tm`                  |  Given `Axiom excluded_middle_axiom = forall P, P \/ ~P`, `assert (H_ANON := excluded_middle_axiom tm). destruct H_ANON as [H2 \| H2]; generalize H2.`         |
+| `ASM_MESON_TAC[thm list]`             |  See MESON_TAC.                                                                                                                                                    |
+| `ASM_REWRITE_TAC[thm list]`           |  See REWRITE_TAC.                                                                                                                                                  |
+| `ASSUME_TAC thm`                    |  `assert (H_ANON := thm)`                                                                                                                                          |
+| `BETA_TAC`                            |  `cbv beta`                                                                                                                                                        |
+| `CHOOSE_TAC thm`                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct HANON`. |
+| `CONJ_TAC`                            |  `split` of a conjunction conclusion only                                                                                                                             |
+| `CONS_11`                             |  `destruct` for list |
+| `CONV_TAC NUM_REDUCE_CONV`            |  `simpl` for natural numbers |
+| `CONV_TAC INT_REDUCE_CONV`            |  `simpl` for ints |
+| `CHEAT_TAC`                           |  `admit` |
+| `DESTRUCT_TAC`                            |  `destruct`, but with a slightly different syntax (see [the doc.](https://github.com/jrh13/hol-light/blob/master/Help/DESTRUCT_TAC.doc))                                                                                                                             |
+| `DISCH_TAC`                           |  `intro`, but moves an assumption only                                                                                                                           |
+| `DISCH_THEN(LABEL_TAC "Hname")`       |  `intro Hname` |
+| `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0]` | `intro Hname. rewrite MOD_EQ_0 in Hname` |
+| `DISJ_CASES_TAC thm`                  |  `destruct` for disjunction |
+| `DISJ1_TAC`                           |  `left`                                                                                                                                                            |
+| `DISJ2_TAC`                           |  `right`                                                                                                                                                           |
+| `EQ_TAC`                              |  `split` for an iff conclusion only                                                                                                                                      |
+| `EXISTS_TAC`                          |  `exists`                                                                                                                                                          |
+| `EXPAND_TAC s`                        |  `rewrite <- H` where `H` is `t = s` | [EXPAND_TAC](https://github.com/jrh13/hol-light/blob/master/Help/EXPAND_TAC.doc) |
+| `FIND_ASSUM ttac term` | If assumption `H:term` exists, apply tactic `ttac H`. | [FIND_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIND_ASSUM.doc) |
+| `FIRST_ASSUM ttac` | ? | [FIRST_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIRST_ASSUM.doc) |
+| `FIX_TAC s`                          | No matching tactic in Coq (correct me if I am wrong); `intros`, but specifies the variable to introduce | [FIX_TAC](https://github.com/jrh13/hol-light/blob/master/Help/FIX_TAC.doc) |
+| `GEN_TAC`                             |  `intro`, but targets   non-propositions only                                                                                                                      |
+| `IMP_REWRITE_TAC[thm list]`           |  Given a list of theorems that look like `P ==> l = r`, do `rewrite` and add `P` to the goal as a conjunction. If the rewritten part is at `P'` of some other implication `P' ==> Q'`, `P` is added as `(P ==> P'[l/r]) ==> Q`. Thos also works for theorems that look like `P ==> l1 = r1 /\ l2 = r2 /\ ..` | [IMP_REWRITE_TAC](https://github.com/jrh13/hol-light/blob/master/Help/IMP_REWRITE_TAC.doc) |
+| `INDUCT_TAC`                          |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have 'num' type ('nat' in   Coq).                                         |
+| `INTRO_TAC`                          |  `intros` + `destruct` of dis/conjunctions                                         |
+| `LABEL_TAC s thm`                     |  `assert (s := thm)`                                                                                                                                               |
+| `LABEL_TAC s (SPECL [t0;t1;…]   thm)` |  `specialize (thm t0 t1 …) as s`                                                                                                                                   |
+| ``LABEL_TAC s (ISPECL [`x:(32)word`;…] thm) `` |  `specialize (thm t0 t1 …) as s` with type instantiations |
+| `LIST_INDUCT_TAC`                     |  `induction` on the first universal   quantifier. (ex: x in `forall x x2 …, P`). It must have '(ty)list' type   ('list ty' in Coq).                                |
+| `MATCH_MP_TAC thm`                    |  `apply`, but the applying thm must be of the form `P ==> Q` |
+| `MATCH_ACCEPT_TAC thm`                |  `apply` |
+| `MESON_TAC[thm list]`                 |  `firstorder` with thms registered   to hint databases. Unlike ASM_MESON_TAC, this does not use assumptions.                                                       |
+| `MP_TAC thm` | `assert (s := thm). generalize thm` | [MP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/MP_TAC.doc) |
+| `NO_TAC`                              |  `fail`   |
+| `ONCE_REWRITE_TAC[thm list]`          |  `rewrite` but rewrites only once.                                                                                                                                 |
+| `tac ORELSE tac`                      |  `orelse` in Ltac2?                                                                                                                                                |
+| `REAL_ARITH_TAC`                      |  `lra`?                                                                                                                                                            |
+| `REFL_TAC`                            |  `reflexivity`, but REFL_TAC only   checks syntactic equivalence (e.g. x = 0 + x cannot be proved)                                                                 |
+| `REPEAT`                              |  `repeat`                                                                                                                                                          |
+| `REWRITE_TAC [thm list]`              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
+| `REWRITE_TAC [GSYM thm]`              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
+| `RULE_ASSUM_TAC (fn:thm->thm)`        |  Perform fn to every assumption. |
+| `SIMP_TAC [thm list]`                 |  REWRITE_TAC, but (1) applies intrinsic rewrite rules as well (basic_rewrites and basic_convs), and (2) accepts conditional rewrite rules of form `c ==> l = r`. The conditional rewrite rules are applied if `c` can be simplified into T. Different from `simpl` in Coq because it does not immediately look into the definitions. For example, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints. | [SIMP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/SIMP_TAC.doc) |
+| `` SPEC_TAC(`x:ty1`, `y:ty2`) ``   |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
+| `STRIP_TAC`                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
+| `SUBGOAL_THEN tm ASSUME_TAC`          |  `cut tm. intros HASSUME`, or `assert (HASSUME: tm)` with a swapped subgoal order                                                                               |
+| `SUBGOAL_THEN tm (LABEL_TAC "name")`  |  `cut tm. intros name`, or `assert (name: tm)` with a swapped subgoal order                                                                               |
+| `TRY tac`                             |  `try tac`                                                                                                                                                         |
+| `tac THEN tac`                        |  `tac; tac`                                                                                                                                                               |
+| `tac THENL [tac list]`                |  `tac. { tac[0]. } { tac[1]. } …`                                                                                                                                     |
+| `UNDISCH_TAC`                         |  `generalize` for a prop.                                                                                                                                          |
+| `USE_THEN s ttac`   | Given an assumption whose name is s, apply ttac which should be analogous to `fun thm -> (*tactic*)`. | [USE_THEN](https://github.com/jrh13/hol-light/blob/master/Help/USE_THEN.doc) |
+| `X_GEN_TAC t`                         |  `intro t`, but targets non-propositions only                                                                                                                    |
+| `` X_META_EXISTS_TAC `x:ty` ``            | `eexists`. Set the name of the meta variable to `x`.                                                                                                               |
 
 - HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, EVERY_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list]
 
 - Frequently used Coq tactics that are not matched yet: `inversion`, `eapply`
 
-### Examples
+### Using Assumptions in HOL Light
 
-```ocaml
-(* Given n:nat, do destruct n as [ | S n'] *)
-DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
+Unlike Coq, assumptions do not have names by default.
+This can be frustrating if you are already familiar with Coq-style proof because you cannot 'pick' an assumption and use it.
+There are several ways to deal with this.
+
+A direct solution is to explicitly name the assumption using `LABEL_TAC`.
+If the goal is `.. |- P ==> Q`, you can `intro Hname` in Coq using `DISCH_THEN(LABEL_TAC "Hname")` in HOL Light.
+This will make the goal look like this:
+
+```
+- : goalstack = 1 subgoal (1 total)
+
+  0 [`P`] (Hname)
+
+`Q`
 ```
 
-```ocaml
-(* Apply the DIMINDEX_32 rewrite rule to every assumption. *)
-RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
-```
+While introducing `P`, you can apply some transformations on-the-fly.
+For example, `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0])` introduces `P` and rewrites the assumption using a set of rewrite rules (`MOD_EQ_0` in this case).
+
+To pick Hname, you can use `USE_THEN "Hname"` as follows:
 
 ```ocaml
 (* Pick an assumption "Hx0lt" (which becomes the 'thm' variable), and rewrite the goal using an equation
@@ -139,15 +151,65 @@ USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm])
 USE_THEN "H" MP_TAC
 ```
 
+However, this solution may not work if you have a large codebase that already introduces a lot of unnamed assumptions.
+Also, this does not explain how to pick one assumption and modify the assumption.
+There are several solutions in these cases.
+
+#### Using Assumption(s) to Update the Conclusion
+
+The first kinds of tactics that you can try is the `ASM_*` tactics.
+- To solve an arithmetic lemma, you might want to use `ARITH_TAC` (and its family tactics) which is analogous to the `lia` and `nia` tactics in Coq. 
+However, `ARITH_TAC` does not consider the equalities/relational equations in the assumptions unlike the Coq tactics.
+In this case, `ASM_ARITH_TAC` will resolve the issue.
+- If you are aware that using the rewrite rules in the assumptions as well as the commutativity property of addition should solve the goal, you can use `ASM_REWRITE_TAC[ADD_SYM]`.
+- If the rewrite rules contain conditional rules (`c ==> l = r`), you can use `ASM_SIMP_TAC[..]`.
+`ASM_SIMP_TAC` first tries to prove `c` using the assumptions as well as the provided rewrite rules, and if it succeeds, it will rewrite `l` in the goal with `r`.
+The table in Tactics in HOL Light vs. Coq describes the differences between `SIMP_TAC` and `REWRITE_TAC`.
+- If the `c` assumption cannot be simply proved via rewritings, you can use `IMP_REWRITE_TAC[..]`.
+- If the goal is a first-order logic problem, you can use `ASM_MESON_TAC[..]`.
+
+If the `ASM_*` tactics are too coarse-grained to solve the goal, you can use tactics that picks an assumption matching some pre-defined pattern + does some behavior.
+- `EXPAND_TAC "x"` finds the assumption of form `e = x` and rewrites all `x` in the conclusion with `e`.
+However, this tactic does not rewrite `x` in the assumptions.
+
+(TODO: more `apply H` in Coq)
+
+If you could not find such tactic,
+- You can use `FIRST_ASSUM ttac` where `ttac` is `thm -> tactic`.
+`FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
+- Or, you can directly pick up an assumption using its definition using `ASSUME`.
+For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
+
+
+#### Using Assumption(s) to Update Other Assumptions
+
+If you want to modify other assumptions using some assumption, you can use `RULE_ASSUM_TAC`.
+
+```ocaml
+(* Apply the DIMINDEX_32 rewrite rule to every assumption. *)
+RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
+```
+
+Combined with the tactics picking a desired assumption that are explained above, this can be achieved.
+
+
+### Others
+
+```ocaml
+(* Given n:nat, do destruct n as [ | S n'] *)
+DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
+```
+
 ### Useful Custom Tactics
 
 #### Goal Printer
 
 ```ocaml
-let PRINT_GOAL_TAC (desc: string): tactic = fun gl -> let _ = Printf.printf "<%s>\n" desc; print_goal gl in ALL_TAC gl;;
+let PRINT_GOAL_TAC (desc: string): tactic =
+  fun gl -> let _ = Printf.printf "<%s>\n" desc; print_goal gl in ALL_TAC gl;;
 ```
 
-#### `note`
+#### `note` Tactic
 
 https://cr.yp.to/2023/holhull-20230406.sage has this `note` tactic that is very handy when you want to add an assumption that can be concluded from a set of rewrite rules 
 ```ocaml
