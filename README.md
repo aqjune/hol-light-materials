@@ -119,7 +119,7 @@ type thm_tactic = thm -> tactic;;
 
 ### Using Assumptions in HOL Light
 
-Unlike Coq, assumptions do not have names by default.
+Unlike Coq, assumptions in HOL Light do not have names by default.
 This can be frustrating if you are already familiar with Coq-style proof because you cannot 'pick' an assumption and use it.
 There are several ways to deal with this.
 
