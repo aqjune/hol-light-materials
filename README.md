@@ -198,3 +198,16 @@ lines must have extra indentations. Currently, the indentation string is fixed t
 (* Given an OCaml string 'name' and term 'tm', make a definition `name = tm` *)
 new_definition (mk_eq (mk_var (name, `:(..type..)`), tm))
 ```
+
+https://cr.yp.to/2023/holhull-20230406.sage has this `note` tactic that is very handy when you want to add an assumption that can be concluded from a set of rewrite rules 
+```ocaml
+let notetac t tac = SUBGOAL_THEN t MP_TAC THENL
+[tac;
+  ALL_TAC] THEN
+DISCH_THEN(fun th -> ASSUME_TAC th);;
+
+let note t why = notetac t(ASM_MESON_TAC why);;
+  
+(* usage *)
+note `1 + 2 = 2 + 1` [ADD_SYM] THEN ...
+```
