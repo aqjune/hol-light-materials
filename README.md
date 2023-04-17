@@ -42,6 +42,9 @@ type tactic = goal -> goalstate;;
 type thm_tactic = thm -> tactic;;
 ```
 
+- Unlike Coq, you cannot define a type of an empty element (`False` in Coq)
+    - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.doc)
+
 
 ## Tactics in HOL Light vs. Coq
 
