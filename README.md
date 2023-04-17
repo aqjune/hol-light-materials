@@ -276,7 +276,7 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 `thenify.py` converts a properly formatted sequence of `e(..);;` commands into the `.. THEN ..` format.
 If some tactic produces multiple subgoals, the beginning of each subgoal must be itemized with `- ` and the following
 lines must have extra indentations. Currently, the indentation string is fixed to two spaces (`  `).
-`thenify_test_input.txt` has an example and `thenify.py thenify_test_input.txt` shows the then-ified output. :)
+`thenify_inputs/` has its inputs and `thenify.py <input.txt>` shows the then-ified output. :)
 
 ### Others
 

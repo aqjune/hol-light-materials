@@ -1,0 +1,37 @@
+e(REPEAT GEN_TAC);;
+(* word to num: step 1. x = y to val x = val y *)
+e(REWRITE_TAC[GSYM VAL_EQ]);;
+(* step 2. remove all word_* *)
+e(REWRITE_TAC [VAL_WORD_ADD; VAL_WORD_MUL; VAL_WORD_ZX_GEN; VAL_WORD_SUBWORD; VAL_WORD; VAL_WORD_SHL]);;
+(* step 3. add x, y < 2^64 *)
+e(ASSUME_TAC (ISPECL [`x:(64)word`] VAL_BOUND));;
+e(ASSUME_TAC (ISPECL [`y:(64)word`] VAL_BOUND));;
+e(RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_64]));;
+(* step 4. eliminate dimindex (:N) and simplify *)
+e(REWRITE_TAC[DIMINDEX_32;DIMINDEX_64;DIMINDEX_128;DIV_1;MOD_MOD_REFL;MOD_MOD_EXP_MIN;ARITH_RULE `2 EXP 0 = 1`; DIV_1]);;
+e(CONV_TAC(DEPTH_CONV NUM_MIN_CONV));;
+e(CONV_TAC MOD_DOWN_CONV);;
+
+(* split x into [x0h, x0l], and divide y as well *)
+e(MAP_EVERY (fun (thm, suffix) -> LABEL_TAC ("Hx" ^ suffix) thm) (zip (CONJUNCTS ((MP (SPECL [`(val (x:(64)word)):num`; `2 EXP 32:num`] DIVISION) (ARITH_RULE `~(2 EXP 32 = 0)`)))) ["eq";"lt"]));;
+e(ABBREV_TAC `xhi = (val (x:(64)word)) DIV 2 EXP 32`);;
+e(ABBREV_TAC `xlo = (val (x:(64)word)) MOD 2 EXP 32`);;
+e(ASM_REWRITE_TAC[]);;
+e(MAP_EVERY (fun (thm, suffix) -> LABEL_TAC ("Hy" ^ suffix) thm) (zip (CONJUNCTS ((MP (SPECL [`(val (y:(64)word)):num`; `2 EXP 32:num`] DIVISION) (ARITH_RULE `~(2 EXP 32 = 0)`)))) ["eq";"lt"]));;
+e(ABBREV_TAC `yhi = (val (y:(64)word)) DIV 2 EXP 32`);;
+e(ABBREV_TAC `ylo = (val (y:(64)word)) MOD 2 EXP 32`);;
+e(ASM_REWRITE_TAC[]);;
+(* lhs *)
+e(REWRITE_TAC[LEFT_ADD_DISTRIB; RIGHT_ADD_DISTRIB]);;
+e(REWRITE_TAC[ARITH_RULE `y1hi * x1hi * 2 EXP 32 = 2 EXP 32 * y1hi * x1hi`; ARITH_RULE `(y1hi * 2 EXP 32) * x1hi = 2 EXP 32 * y1hi * x1hi`]);;
+e(REWRITE_TAC[MOD_MULT_ADD]);;
+(* rhs *)
+e(REWRITE_TAC[MULT_ASSOC; ARITH_RULE `2 EXP 32 * 2 EXP 32 = 2 EXP 64`]);;
+e(REWRITE_TAC[GSYM ADD_ASSOC; GSYM MULT_ASSOC]);;
+e(REWRITE_TAC[MOD_MULT_ADD]);;
+(* lhs = rhs *)
+e(REWRITE_TAC[ARITH_RULE `2 EXP 64 = 2 EXP 32 * 2 EXP 32`]);;
+e(REWRITE_TAC[MOD_MULT_MOD]);;
+e(REWRITE_TAC[ARITH_RULE `2 EXP 32 * p + 2 EXP 32 * q = 2 EXP 32 * (p + q)`; MOD_MULT_ADD]);;
+e(REWRITE_TAC [lemma4]);;
+e(REWRITE_TAC [ARITH_RULE `(xlo * ylo + 2 EXP 32 * (yhi * xlo + ylo * xhi)) DIV 2 EXP 32 = (2 EXP 32 * xhi * ylo + 2 EXP 32 * xlo * yhi + xlo * ylo) DIV 2 EXP 32`]);;
