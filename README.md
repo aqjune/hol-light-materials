@@ -70,8 +70,8 @@ type thm_tactic = thm -> tactic;;
 | `AP_THM_TAC`                          |  `apply equal_f`                                                                                                                                                   |
 | ``ARITH_TAC``                           |  Properly apply solvers in   Micromega (`lia`, `nia`, …). Sometimes `nia` can solve a goal that ARITH_TAC   cannot (e.g., `x*x-x = x*(x-1)`).                        |
 | `ASM_CASES_TAC tm`                  |  Given `Axiom excluded_middle_axiom = forall P, P \/ ~P`, `assert (H_ANON := excluded_middle_axiom tm). destruct H_ANON as [H2 \| H2]; generalize H2.`         |
-| `ASM_MESON_TAC[thm list]`             |  See MESON_TAC.                                                                                                                                                    |
-| `ASM_REWRITE_TAC[thm list]`           |  See REWRITE_TAC.                                                                                                                                                  |
+| `ASM_MESON_TAC[thm list]`             |  See `MESON_TAC`.                                                                                                                                                    |
+| `ASM_REWRITE_TAC[thm list]`           |  See `REWRITE_TAC`.                                                                                                                                                  |
 | `ASSUME_TAC thm`                    |  `assert (H_ANON := thm)`                                                                                                                                          |
 | `BETA_TAC`                            |  `cbv beta`                                                                                                                                                        |
 | `CHOOSE_TAC thm`                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct HANON`. |
@@ -114,7 +114,7 @@ type thm_tactic = thm -> tactic;;
 | `REWRITE_TAC [thm list]`              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
 | `REWRITE_TAC [GSYM thm]`              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
 | `RULE_ASSUM_TAC (fn:thm->thm)`        |  Perform fn to every assumption. |
-| `SIMP_TAC [thm list]`                 |  REWRITE_TAC, but (1) applies intrinsic rewrite rules as well (basic_rewrites and basic_convs), and (2) accepts conditional rewrite rules of form `c ==> l = r`. The conditional rewrite rules are applied if `c` can be simplified into T. Different from `simpl` in Coq because it does not immediately look into the definitions. For example, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints. | [SIMP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/SIMP_TAC.doc) |
+| `SIMP_TAC [thm list]`                 |  `REWRITE_TAC`, but (1) applies intrinsic rewrite rules as well (basic_rewrites and basic_convs), and (2) accepts conditional rewrite rules of form `c ==> l = r`. The conditional rewrite rules are applied if `c` can be simplified into T. Different from `simpl` in Coq because it does not immediately look into the definitions. For example, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints. | [SIMP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/SIMP_TAC.doc) |
 | `` SPEC_TAC(`x:ty1`, `y:ty2`) ``   |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
 | `STRIP_TAC`                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
 | `SUBGOAL_THEN tm ASSUME_TAC`          |  `cut tm. intros HASSUME`, or `assert (HASSUME: tm)` with a swapped subgoal order                                                                               |
@@ -206,6 +206,21 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 
 Combined with the tactics picking a desired assumption that are explained above, this can be achieved.
 
+#### Removing Unnecessary Assumptions
+
+You can define a custom tactic that is analogous to the one in s2n-bignum ([link](https://github.com/awslabs/s2n-bignum/blob/b0aa5e4bc2b897cfa4b5d5d5e49c94f371afd0be/arm/proofs/arm.ml#L405-L410)):
+
+```ocaml
+let DISCARD_ASSUMPTIONS_TAC P =
+  REPEAT(FIRST_X_ASSUM(K ALL_TAC o check P));;
+
+let DISCARD_MATCHING_ASSUMPTIONS pats =
+  DISCARD_ASSUMPTIONS_TAC
+   (fun th -> exists (fun ptm -> can (term_match [] ptm) (concl th)) pats);;
+   
+(* Use case *)
+e(DISCARD_MATCHING_ASSUMPTIONS [`word a = b`]);;
+```
 
 ### Others
 
