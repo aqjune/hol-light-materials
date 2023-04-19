@@ -56,6 +56,11 @@ type thm_tactic = thm -> tactic;;
     - Then, how can we represent e.g., a vector of N elements?
     - A: define `vector` of element type `A` as `N -> A` where `N` is a type variable ([link](https://www.cl.cam.ac.uk/~jrh13/papers/hol05.pdf))
 
+## Basic Syntax
+
+- A pair of `num`: `num#num`
+- Optional `num`: `num option`
+- A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
 
 ## Tactics in HOL Light vs. Coq
 
