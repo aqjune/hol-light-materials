@@ -308,6 +308,12 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 #remove_printer pp_print_qterm;;
 `match x with | SOME y -> 10 | NONE -> 20`;;
 #install_printer pp_print_qterm;;
+
+(* Show the AST of a type *)
+#remove_printer pp_print_qtype;;
+loads "Library/words.ml":;
+`word 10: (32)word`;;
+#install_printer pp_print_qtype;;
 ```
 
 ## Misc
