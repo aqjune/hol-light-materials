@@ -303,6 +303,13 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 | print_goalstack (!current_goalstack) | Prints the current goal stack. |
 | r N                   | Similar to `focus` (it is a tactic in Coq), but `r` rotates the subgoals |
 
+```ocaml
+(* Show the AST of a term *)
+#remove_printer pp_print_qterm;;
+`match x with | SOME y -> 10 | NONE -> 20`;;
+#install_printer pp_print_qterm;;
+```
+
 ## Misc
 
 ### Thenify
