@@ -63,6 +63,10 @@ type thm_tactic = thm -> tactic;;
 - A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
 - `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
 
+## AST
+
+Please read [AST.md](AST.md).
+
 ## Tactics in HOL Light vs. Coq
 
 | HOL Light                           | Coq                                                                                                                                                                | Doc |
