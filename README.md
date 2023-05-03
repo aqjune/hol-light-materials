@@ -52,9 +52,7 @@ type thm_tactic = thm -> tactic;;
     - Therefore, `!` is `\P. (P = \x. true)`.
 - Unlike Coq, you cannot define a type of an empty element (`False` in Coq)
     - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.doc)
-- Uses a simply typed lambda calculus
-    - Then, how can we represent e.g., a vector of N elements?
-    - A: define `vector` of element type `A` as `N -> A` where `N` is a type variable ([link](https://www.cl.cam.ac.uk/~jrh13/papers/hol05.pdf))
+- Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
 
 ## Basic Syntax
 
