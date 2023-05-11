@@ -96,6 +96,7 @@ Please read [AST.md](AST.md).
 | `DISJ1_TAC`                           |  `left`                                                                                                                                                            |
 | `DISJ2_TAC`                           |  `right`                                                                                                                                                           |
 | `EQ_TAC`                              |  `split` for an iff conclusion only                                                                                                                                      |
+| `EVERY_ASSUM ttac` | For each assumption `thm`, run `ttac(thm)`. | [EVERY_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/EVERY_ASSUM.doc) |
 | `EXISTS_TAC`                          |  `exists`                                                                                                                                                          |
 | `EXPAND_TAC s`                        |  `rewrite <- H` where `H` is `t = s` | [EXPAND_TAC](https://github.com/jrh13/hol-light/blob/master/Help/EXPAND_TAC.doc) |
 | `FIND_ASSUM ttac term` | If assumption `H:term` exists, apply tactic `ttac H`. | [FIND_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIND_ASSUM.doc) |
@@ -199,6 +200,7 @@ However, this tactic does not rewrite `x` in the assumptions.
 If you could not find such tactic,
 - You can use `FIRST_ASSUM ttac` where `ttac` is `thm -> tactic`.
 `FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
+- You can iterate over assumptions using `EVERY_ASSUM ttac`. For example, `EVERY_ASSUM (fun thm -> REWRITE_TAC[GSYM thm])` is equivalent to `ASM_REWRITE_TAC[]` modulo the rewrite direction (`<-` rather than `->`).
 - Or, you can directly pick up an assumption using its definition using `ASSUME`.
 For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
 
