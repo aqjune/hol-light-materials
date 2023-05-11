@@ -136,7 +136,7 @@ Please read [AST.md](AST.md).
 | `X_GEN_TAC t`                         |  `intro t`, but targets non-propositions only                                                                                                                    |
 | `` X_META_EXISTS_TAC `x:ty` ``            | `eexists`. Set the name of the meta variable to `x`.                                                                                                               |
 
-- HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, EVERY_ASSUM ttac, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list]
+- HOL Light tactics that appear in the [Quick Reference Guide](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt) but are not matched yet: COND_CASES_TAC, FIRST_X_ASSUM ttac, GEN_REWRITE_TAC cnvn [th], MAP_EVERY, MP_TAC thm, POP_ASSUM ttac, POP_ASSUM_LIST ttac, RULE_ASSUM_TAC, SET_TAC [thm list]
 
 - Frequently used Coq tactics that are not matched yet: `inversion`, `eapply`
 
