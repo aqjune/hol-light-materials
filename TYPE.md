@@ -2,7 +2,7 @@
 
 HOL Light uses a simply typed lambda calculus.
 Then, a natural question is how to represent e.g., a vector of N elements.
-The solution is define vector of element type A as N -> A where N is a type variable (link)
+The solution is define vector of element type A as N -> A where N is a type variable ([link](https://www.cl.cam.ac.uk/~jrh13/papers/hol05.pdf))
 
 #### Q: But `` `let x:num = 1 in let y:(x)word = (word 0:(x)word) in y` `` seems to be a valid term!
 
