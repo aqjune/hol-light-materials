@@ -6,6 +6,24 @@ The solution is define vector of element type A as N -> A where N is a type vari
 For example, an `8` type is a set containing `1..8` (or `0..7` if it is more convenient), and using this `8` type we can define `(8)word` which is a word of 8 bits.
 Note that `N` does not need to be a numeric-like type; for example, you can use `(bool)word` type.
 
+A function that is defined with `let` does not allow assignment of different types into one type variable:
+
+```ocaml
+# `let g = (\(x:N word). word_add x x) in g (word 1:(1)word), g (word 2:(2)word)`;;
+Exception:
+Failure
+ "typechecking error (initial type assignment):mk_comb: types do not agree".
+```
+
+To use this, `g` must be defined using `define` first:
+
+```ocaml
+# define `g (x:N word) = word_add x x`;;
+- : thm = |- g x = word_add x x
+# `g (word 1:(1)word), g (word 2:(2)word)`;;
+- : term = `g (word 1),g (word 2)`
+```
+
 Note that `printer.ml` has the `typify_universal_set` flag that prints the universal set `UNIV:A->bool` as `"(:A)"`.
 
 #### Q: But `` `let x:num = 1 in let y:(x)word = (word 0:(x)word) in y` `` seems to be a valid term!
