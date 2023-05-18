@@ -177,6 +177,11 @@ USE_THEN "H" MP_TAC
 
 If you want to use the assumption and remove it, you can use `REMOVE_THEN`. 
 
+```ocaml
+(* Pick an assumption "Hmcases" that is `exists ...`, apply CHOOSE, name the resulting assumption as "Hmcases'" and remove the old "Hmcases". *)
+REMOVE_THEN "Hmcases" (CHOOSE_THEN (LABEL_TAC "Hmcases'"))
+```
+
 However, this solution may not work if you have a large codebase that already introduces a lot of unnamed assumptions.
 Also, this does not explain how to pick one assumption and modify the assumption.
 There are several solutions in these cases.
