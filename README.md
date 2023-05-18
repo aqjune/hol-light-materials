@@ -119,6 +119,7 @@ Please read [AST.md](AST.md).
 | `tac ORELSE tac`                      |  `orelse` in Ltac2?                                                                                                                                                |
 | `REAL_ARITH_TAC`                      |  `lra`?                                                                                                                                                            |
 | `REFL_TAC`                            |  `reflexivity`, but REFL_TAC only   checks syntactic equivalence (e.g. x = 0 + x cannot be proved)                                                                 |
+| `REMOVE_THEN s ttac` | Given an assumption whose name is s, equivalent to `USE_THEN s ttac`(in HOL Light) then `clear s` (in Coq). | [REMOVE_THEN](https://github.com/jrh13/hol-light/blob/master/Help/REMOVE_THEN.doc) |
 | `REPEAT`                              |  `repeat`                                                                                                                                                          |
 | `REWRITE_TAC [thm list]`              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
 | `REWRITE_TAC [GSYM thm]`              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
@@ -173,6 +174,8 @@ USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm])
 (* Pick an assumption "H" and generalize it. *)
 USE_THEN "H" MP_TAC
 ```
+
+If you want to use the assumption and remove it, you can use `REMOVE_THEN`. 
 
 However, this solution may not work if you have a large codebase that already introduces a lot of unnamed assumptions.
 Also, this does not explain how to pick one assumption and modify the assumption.
@@ -237,6 +240,9 @@ e(DISCARD_MATCHING_ASSUMPTIONS [`word a = b`]);;
 ```ocaml
 (* Given n:nat, do destruct n as [ | S n'] *)
 DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
+
+(* Add the names to destruct *)
+DISJ_CASES_THEN (LABEL_TAC "mcases") (SPECL [`m:num`] num_CASES)
 ```
 
 ### Useful Custom Tactics
