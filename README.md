@@ -81,6 +81,7 @@ Please read [AST.md](AST.md).
 | `ASM_MESON_TAC[thm list]`             |  See `MESON_TAC`.                                                                                                                                                    |
 | `ASM_REWRITE_TAC[thm list]`           |  See `REWRITE_TAC`.                                                                                                                                                  |
 | `ASSUME_TAC thm`                    |  `assert (H_ANON := thm)`                                                                                                                                          |
+| `ASSUM_LIST f` | Probably in Ltac only? | [ASSUM_LIST](https://github.com/jrh13/hol-light/blob/master/Help/ASSUM_LIST.doc) |
 | `BETA_TAC`                            |  `cbv beta`                                                                                                                                                        |
 | `CHOOSE_TAC thm`                      |  If `thm` is `exists x. P x`, do `assert (HANON := thm). destruct HANON`. |
 | `CONJ_TAC`                            |  `split` of a conjunction conclusion only                                                                                                                             |
@@ -209,6 +210,7 @@ If you could not find such tactic,
 - You can use `FIRST_ASSUM ttac` where `ttac` is `thm -> tactic`.
 `FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
 - You can iterate over assumptions using `EVERY_ASSUM ttac`. For example, `EVERY_ASSUM (fun thm -> REWRITE_TAC[GSYM thm])` is equivalent to `ASM_REWRITE_TAC[]` modulo the rewrite direction (`<-` rather than `->`).
+- You can get a list of assumptions using `ASSUM_LIST` and do something with it.
 - Or, you can directly pick up an assumption using its definition using `ASSUME`.
 For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
 
