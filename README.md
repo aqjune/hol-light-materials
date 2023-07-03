@@ -211,8 +211,11 @@ If you could not find such tactic,
 `FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
 - You can iterate over assumptions using `EVERY_ASSUM ttac`. For example, `EVERY_ASSUM (fun thm -> REWRITE_TAC[GSYM thm])` is equivalent to `ASM_REWRITE_TAC[]` modulo the rewrite direction (`<-` rather than `->`).
 - You can get a list of assumptions using `ASSUM_LIST` and do something with it.
-- Or, you can directly pick up an assumption using its definition using `ASSUME`.
+
+Or, you can explicitly give the expression and do something with it.
+- You can directly pick up an assumption using its definition using `ASSUME`.
 For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
+- If you want a more general version, you can use `UNDISCH_THEN`, e.g., ``UNDISCH_THEN `k4 = 0` (fun thm -> REWRITE_TAC[thm])``
 
 
 #### Using Assumption(s) to Update Other Assumptions
@@ -225,6 +228,12 @@ RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
 ```
 
 Combined with the tactics picking a desired assumption that are explained above, this can be achieved.
+
+If you want to rewrite both conclusion and assumptions:
+```ocaml
+(* Rewrite k4 in every place into 0. *)
+UNDISCH_THEN `k4 = 0` SUBST_ALL_TAC
+```
 
 #### Removing Unnecessary Assumptions
 
