@@ -270,6 +270,14 @@ let PRINT_GOAL_TAC (desc: string): tactic =
   fun gl -> let _ = Printf.printf "<%s>\n" desc; print_goal gl in ALL_TAC gl;;
 ```
 
+#### Rewrite assumptions
+
+```ocaml
+(* REWRITE_ASSUMES_TAC `x = 1` picks the `x = 1` assumption and rewrites all other assumptions using this rule. *)
+let REWRITE_ASSUMES_TAC (t:term) =
+    UNDISCH_THEN t (fun thm -> RULE_ASSUM_TAC (REWRITE_RULE [thm]) THEN ASSUME_TAC thm);;
+```
+
 #### `note` Tactic
 
 https://cr.yp.to/2023/holhull-20230406.sage has this `note` tactic that is very handy when you want to add an assumption that can be concluded from a set of rewrite rules 
