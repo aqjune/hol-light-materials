@@ -145,20 +145,42 @@ Please read [AST.md](AST.md).
 - Frequently used Coq tactics that are not matched yet: `inversion`, `eapply`
 
 
+### Inference Rules
+
+| HOL Light                           | Coq                                                                                                                                                                | Doc |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
+| MP P Q  | `P Q` where `P` is `Prop -> Prop`, `Q` is Prop | [MP](https://github.com/jrh13/hol-light/blob/master/Help/MP.hlp) |
+| MATCH_MP P Q | equivalent to MP P Q, but instantiates quantified variables | [MATCH_MP](https://github.com/jrh13/hol-light/blob/master/Help/MATCH_MP.hlp) |
+| REWRITE_RULE [thms] thm | Given thm, return a new theorem that has thms rewritten in it | [REWRITE_RULE](https://github.com/jrh13/hol-light/blob/master/Help/REWRITE_RULE.hlp) |
+
+
+### Commands
+
+| HOL Light                           | Coq                                                                                                                                                                |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| help "<keyword>"      | ?                |
+| loadt "path"          | `Load "path"`    |
+| search [name "ASSOC"] | `Search "ASSOC"` |
+| search [\`nat\`]      | `Search nat`     |
+| search [\`x + y\`]    | `Search` with the pattern |
+| type_of \`term\`      | `Check term`     |
+| print_goalstack (!current_goalstack) | Prints the current goal stack. |
+| r N                   | Similar to `focus` (it is a tactic in Coq), but `r` rotates the subgoals |
+
+
+
+## Useful & Easy Tricks
+
 ### Using or Updating Assumptions in HOL Light
 
 See [PlayingWithAssumptions.md](PlayingWithAssumptions.md).
 
 
-### Others
+### How to Rewrite Well
 
-```ocaml
-(* Given n:nat, do destruct n as [ | S n'] *)
-DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
+(TODO)
 
-(* Add the names to destruct *)
-DISJ_CASES_THEN (LABEL_TAC "mcases") (SPECL [`m:num`] num_CASES)
-```
+(TODO: `TARGET_REWRITE_TAC`)
 
 
 ### Useful Custom Tactics
@@ -193,14 +215,6 @@ let note t why = notetac t(ASM_MESON_TAC why);;
 note `1 + 2 = 2 + 1` [ADD_SYM] THEN ...
 ```
 
-## Inference Rules
-
-| HOL Light                           | Coq                                                                                                                                                                | Doc |
-|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
-| MP P Q  | `P Q` where `P` is `Prop -> Prop`, `Q` is Prop | [MP](https://github.com/jrh13/hol-light/blob/master/Help/MP.hlp) |
-| MATCH_MP P Q | equivalent to MP P Q, but instantiates quantified variables | [MATCH_MP](https://github.com/jrh13/hol-light/blob/master/Help/MATCH_MP.hlp) |
-| REWRITE_RULE [thms] thm | Given thm, return a new theorem that has thms rewritten in it | [REWRITE_RULE](https://github.com/jrh13/hol-light/blob/master/Help/REWRITE_RULE.hlp) |
-
 #### Examples
 
 ```ocaml
@@ -215,7 +229,15 @@ SPECL [`x:num`; `2 EXP 32:num`] (CONJUNCT1 DIVISION_SIMP);;
 REWRITE_RULE [DIMINDEX_32] (ISPECL [`y:(32)word`] VAL_MOD_REFL)
 ```
 
-## Useful Conversions
+```ocaml
+(* Given n:nat, do destruct n as [ | S n'] *)
+DISJ_CASES_TAC(SPECL [`x:num`] num_CASES)
+
+(* Add the names to destruct *)
+DISJ_CASES_THEN (LABEL_TAC "mcases") (SPECL [`m:num`] num_CASES)
+```
+
+### Useful Conversions
 
 - MOD_DOWN_CONV
 - NUM_REDUCE_CONV
@@ -225,18 +247,8 @@ REWRITE_RULE [DIMINDEX_32] (ISPECL [`y:(32)word`] VAL_MOD_REFL)
 NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *)
 ```
 
-## Commands in HOL Light vs. Coq
 
-| HOL Light                           | Coq                                                                                                                                                                |
-|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| help "<keyword>"      | ?                |
-| loadt "path"          | `Load "path"`    |
-| search [name "ASSOC"] | `Search "ASSOC"` |
-| search [\`nat\`]      | `Search nat`     |
-| search [\`x + y\`]    | `Search` with the pattern |
-| type_of \`term\`      | `Check term`     |
-| print_goalstack (!current_goalstack) | Prints the current goal stack. |
-| r N                   | Similar to `focus` (it is a tactic in Coq), but `r` rotates the subgoals |
+### Commands
 
 ```ocaml
 (* Show the AST of a term *)
@@ -250,6 +262,7 @@ loads "Library/words.ml":;
 `word 10: (32)word`;;
 #install_printer pp_print_qtype;;
 ```
+
 
 ## Misc
 
