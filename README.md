@@ -126,7 +126,7 @@ Please read [AST.md](AST.md).
 | `REWRITE_TAC [thm list]`              |  `repeat (try rewrite thm[0]; try rewrite thm[1]; …)`, but unlike `rewrite` in Coq, if the conclusion matches exactly one of thm list, the goal is immediately proved. |
 | `REWRITE_TAC [GSYM thm]`              |  `rewrite <- thm`, with the characteristics described in the generic REWRITE_TAC form above |
 | `RULE_ASSUM_TAC (fn:thm->thm)`        |  Perform fn to every assumption. | [RULE_ASSUM_TAC](https://github.com/jrh13/hol-light/blob/master/Help/RULE_ASSUM_TAC.hlp) |
-| `RULE_ASSUM_TAC (REWRITE_RULE[r])` | `rewrite r in * |-` | |
+| `RULE_ASSUM_TAC (REWRITE_RULE[r])` | `rewrite r in * `<code>&#124;</code>`-` | |
 | `SIMP_TAC [thm list]`                 |  `REWRITE_TAC`, but (1) applies intrinsic rewrite rules as well (basic_rewrites and basic_convs), and (2) accepts conditional rewrite rules of form `c ==> l = r`. The conditional rewrite rules are applied if `c` can be simplified into T. Different from `simpl` in Coq because it does not immediately look into the definitions. For example, SIMP_TAC cannot simplify `0 + x` into `x` without additional hints. | [SIMP_TAC](https://github.com/jrh13/hol-light/blob/master/Help/SIMP_TAC.hlp) |
 | `` SPEC_TAC(`x:ty1`, `y:ty2`) ``   |  `generalize x as y`. If `x` is not used in any assumption and `x` is `y`, this is equal to `revert x`.                                                          |
 | `STRIP_TAC`                           |  `split` (for conjunctions) + `intro` (GEN_TAC + CONJ_TAC + elaborated version of DISCH_TAC)                                                                     |
