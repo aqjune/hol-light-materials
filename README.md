@@ -102,6 +102,7 @@ Please read [AST.md](AST.md).
 | `EXPAND_TAC s`                        |  `rewrite <- H` where `H` is `t = s` | [EXPAND_TAC](https://github.com/jrh13/hol-light/blob/master/Help/EXPAND_TAC.hlp) |
 | `FIND_ASSUM ttac term` | If assumption `H:term` exists, apply tactic `ttac H`. | [FIND_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIND_ASSUM.hlp) |
 | `FIRST_ASSUM ttac` | ? | [FIRST_ASSUM](https://github.com/jrh13/hol-light/blob/master/Help/FIRST_ASSUM.hlp) |
+| `FIRST_ASSUM CONTR_TAC` | `exfalso` | [CONTR_TAC](https://github.com/jrh13/hol-light/blob/master/Help/CONTR_TAC.hlp) |
 | `FIX_TAC s`                          | No matching tactic in Coq (correct me if I am wrong); `intros`, but specifies the variable to introduce | [FIX_TAC](https://github.com/jrh13/hol-light/blob/master/Help/FIX_TAC.hlp) |
 | `GEN_TAC`                             |  `intro`, but targets   non-propositions only                                                                                                                      |
 | `IMP_REWRITE_TAC[thm list]`           |  Given a list of theorems that look like `P ==> l = r`, do `rewrite` and add `P` to the goal as a conjunction. If the rewritten part is at `P'` of some other implication `P' ==> Q'`, `P` is added as `(P ==> P'[l/r]) ==> Q`. Thos also works for theorems that look like `P ==> l1 = r1 /\ l2 = r2 /\ ..` | [IMP_REWRITE_TAC](https://github.com/jrh13/hol-light/blob/master/Help/IMP_REWRITE_TAC.hlp) |
