@@ -52,6 +52,7 @@ type thm_tactic = thm -> tactic;;
     - Therefore, `!` is `\P. (P = \x. true)`.
 - Unlike Coq, you cannot define a type of an empty element (`False` in Coq)
     - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.hlp)
+    - This allows you to prove `?x y. x = y`! (`?x` is exists x.)
 - Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
 
 ## Basic Syntax
