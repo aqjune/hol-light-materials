@@ -4,6 +4,15 @@ Online materials for HOL Light:
 - Reference Manual ([pdf](https://www.cl.cam.ac.uk/~jrh13/hol-light/reference.pdf), [html](https://www.cl.cam.ac.uk/~jrh13/hol-light/reference.html))
 - Very Quick Reference ([pdf](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.pdf), [txt](https://www.cl.cam.ac.uk/~jrh13/hol-light/holchart.txt))
 
+## Building & running HOL Light
+
+```
+cd build-script
+./clone-and-build-hollight.sh
+cd hol-light
+./run-hol-light
+```
+
 ## Fundamentals
 
 Please read [Fundamentals.md](Fundamentals.md)
