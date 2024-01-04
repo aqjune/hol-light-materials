@@ -13,6 +13,8 @@ cd hol-light
 ./run-hol-light
 ```
 
+The OCaml REPL does not accept arrow keys by default. To resolve this. you can use ledit (https://opam.ocaml.org/packages/ledit/) and use ledit ocaml instead. ledit can be installed using either apt install ledit or opam install ledit.
+
 ## Fundamentals
 
 Please read [Fundamentals.md](Fundamentals.md)
