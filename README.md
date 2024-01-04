@@ -15,14 +15,6 @@ Please read [Fundamentals.md](Fundamentals.md)
 - A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
 - `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
 
-## Internal Representation of Terms
-
-Please read [AST.md](AST.md).
-
-## HOL Light vs. Coq
-
-Please read [HOL Light vs. Coq](HOLLightvsCoq.md).
-
 ## Useful & Easy Tricks
 
 ### Using or Updating Assumptions in HOL Light
@@ -30,18 +22,9 @@ Please read [HOL Light vs. Coq](HOLLightvsCoq.md).
 See [PlayingWithAssumptions.md](PlayingWithAssumptions.md).
 
 
-### How to Rewrite Well
+### How to Use Rewrite Tactic Well
 
-(TODO)
-
-(TODO: `TARGET_REWRITE_TAC`)
-
-```ocaml
-(* Given a goal that is `w1:int64 = w2 /\ w3:int64 = w4`, convert this to
-   `val w1 = val w2 /\ val w3 = val w4` using `GSYM VAL_EQ`.
-   This works even if the goal has more than one conjunction. *)
-GEN_REWRITE_TAC (DEPTH_BINOP_CONV `(/\):bool->bool->bool`) [GSYM VAL_EQ]
-```
+See [RewriteTac.md](RewriteTac.md) (note: this is WIP)
 
 ### Useful Custom Tactics
 
@@ -99,7 +82,6 @@ DISJ_CASES_THEN (LABEL_TAC "mcases") (SPECL [`m:num`] num_CASES)
 
 ### Useful Conversions
 
-- MOD_DOWN_CONV
 - NUM_REDUCE_CONV
 
 ```ocaml
@@ -107,6 +89,7 @@ DISJ_CASES_THEN (LABEL_TAC "mcases") (SPECL [`m:num`] num_CASES)
 NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *)
 ```
 
+- MOD_DOWN_CONV
 
 ### Commands
 
@@ -122,6 +105,14 @@ loads "Library/words.ml":;
 `word 10: (32)word`;;
 #install_printer pp_print_qtype;;
 ```
+
+## Internal Representation of Terms
+
+Please read [AST.md](AST.md).
+
+## HOL Light vs. Coq
+
+Please read [HOL Light vs. Coq](HOLLightvsCoq.md).
 
 
 ## Misc
