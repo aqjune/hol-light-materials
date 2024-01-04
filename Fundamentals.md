@@ -9,8 +9,8 @@ type hol_type = Tyvar of string
 (* term is a mathematical expression *)
 type term = Var of string * hol_type
           | Const of string * hol_type
-          | Comb of term * term
-          | Abs of term * term
+          | Comb of term * term         (* e1 e2 *)
+          | Abs of term * term          (* \x. e *)
 
 (* thm (theorem) is a proven fact *)
 type thm = Sequent of (term list * term)
