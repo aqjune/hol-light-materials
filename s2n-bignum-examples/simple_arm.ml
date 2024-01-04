@@ -2,6 +2,7 @@
 
 needs "arm/proofs/base.ml";;
 
+(* save_literal_from_elf "bytelist.txt" "simple_arm.o";; *)
 let simple_arm_mc = define_assert_from_elf "simple_arm_mc" "simple_arm.o"
 [
   0xaa1f03e0;       (* arm_MOV X0 XZR *)
