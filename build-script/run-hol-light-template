@@ -3,4 +3,4 @@ eval $(opam env --switch __DIR --set-switch)
 export HOLLIGHT_DIR=__DIR
 # NOTE: You will want to add ledit before __OCAML here, to allow using arrow keys.
 # ledit can be installed using `apt install ledit` or `opam install ledit`.
-__OCAML -init $HOLLIGHT_DIR/hol.ml -I `camlp5 -where` camlp5o.cma
+__OCAML -init $HOLLIGHT_DIR/hol.ml
