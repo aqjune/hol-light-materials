@@ -1,6 +1,6 @@
 import sys
 
-print(sys.argv[1])
+#print(sys.argv[1])
 
 f = open(sys.argv[1], "r")
 # A list of (indentation level, is it a new start?, is it a comment? actual line)
