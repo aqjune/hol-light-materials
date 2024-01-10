@@ -2,14 +2,14 @@
 
 (* 1. WORD_SUBWORD_JOIN *)
 g `!(x32:(32)word) (y32:(32)word).
-		word_subword (word_join x32 y32: (64)word) (0,32) = y32 /\
+    word_subword (word_join x32 y32: (64)word) (0,32) = y32 /\
     word_subword (word_join x32 y32: (64)word) (32,32) = x32`;;
 e(CONV_TAC WORD_BLAST);;
 
 (* 2. WORD_ADD_ASSOC_CONSTS *)
 g `!(x:(N)word) n m.
     (word_add (word_add x (word n)) (word m)) = (word_add x (word (n+m)))`;;
-e(CONV_TAC WORD_RULe);;
+e(CONV_TAC WORD_RULE);;
 
 (* 3. WORD_OR_ADD_DISJ *)
 g `! (x:(64)word) (y:(64)word).

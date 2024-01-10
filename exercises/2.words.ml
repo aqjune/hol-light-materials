@@ -16,7 +16,7 @@
 (* 1. WORD_SUBWORD_JOIN *)
 
 g `!(x32:(32)word) (y32:(32)word).
-		word_subword (word_join x32 y32: (64)word) (0,32) = y32 /\
+    word_subword (word_join x32 y32: (64)word) (0,32) = y32 /\
     word_subword (word_join x32 y32: (64)word) (32,32) = x32`;;
 e(CHEAT_TAC);;
 
