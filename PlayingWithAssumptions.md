@@ -60,18 +60,18 @@ If the `ASM_*` tactics are too coarse-grained to solve the goal, you can use tac
 - `EXPAND_TAC "x"` finds the assumption of form `e = x` and rewrites all `x` in the conclusion with `e`.
 However, this tactic does not rewrite `x` in the assumptions.
 
-(TODO: more `apply H` in Coq)
+Or, you can explicitly pick the expression assumption and do something with it.
+- You can directly pick up an assumption using its definition using `ASSUME`.
+For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
+- If you want a more general version, you can use `UNDISCH_THEN`, e.g., ``UNDISCH_THEN `k4 = 0` (fun thm -> REWRITE_TAC[thm])``.
+Note that this will remove the assumption too.
 
-If you could not find such tactic,
+Or, if you can avoid explicitly choosing, you can do follows:
 - You can use `FIRST_ASSUM ttac` where `ttac` is `thm -> tactic`.
 `FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
 - You can iterate over assumptions using `EVERY_ASSUM ttac`. For example, `EVERY_ASSUM (fun thm -> REWRITE_TAC[GSYM thm])` is equivalent to `ASM_REWRITE_TAC[]` modulo the rewrite direction (`<-` rather than `->`).
 - You can get a list of assumptions using `ASSUM_LIST` and do something with it.
-
-Or, you can explicitly give the expression and do something with it.
-- You can directly pick up an assumption using its definition using `ASSUME`.
-For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
-- If you want a more general version, you can use `UNDISCH_THEN`, e.g., ``UNDISCH_THEN `k4 = 0` (fun thm -> REWRITE_TAC[thm])``
+- Or, you can write your own tactic because tactic can be written as `fun (assumption_list, goal_term) -> (* body *)`.
 
 
 ## Using Assumption(s) to Update Other Assumptions
@@ -89,6 +89,23 @@ If you want to rewrite both conclusion and assumptions:
 ```ocaml
 (* Rewrite k4 in every place into 0. *)
 UNDISCH_THEN `k4 = 0` SUBST_ALL_TAC
+```
+
+For more elaborate update, a common pattern that HOL Light proofs use is to keep the assumption of interest at
+the left hand side of implication:
+```
+  0 [`x = 0`]
+  1 [`f x = 10`]
+
+`f (f x) = 20`
+
+# e (UNDISCH_TAC `f (x:num) = 10`);;
+
+  0 [`x = 0`]
+
+`f x = 10 ==> f (f x) = 20`
+
+(Now you can use any tactic that applies to the conclusion)
 ```
 
 ## Removing Unnecessary Assumptions
