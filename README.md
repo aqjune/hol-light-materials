@@ -28,7 +28,8 @@ Please read [Fundamentals.md](Fundamentals.md)
 
 ## Examples
 
-- s2n-bignum-examples: examples for proving assembly programs in s2n-bignum
+- [exercises](exercises): exercises for HOL Light
+- [s2n-bignum-examples](s2n-bignum-examples): examples for proving assembly programs in s2n-bignum
 
 ## Useful & Easy Tricks
 
