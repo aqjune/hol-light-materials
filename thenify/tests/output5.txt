@@ -1,0 +1,60 @@
+(* Converted by thenify.py *)
+REWRITE_TAC[LENGTH_APPEND;MULLOHI_EXEC_LENGTH;BARRIER_INST_BYTES_LENGTH] THEN
+CONV_TAC (ONCE_DEPTH_CONV NUM_DIVIDES_CONV) THEN
+REWRITE_TAC[eventually_n_at_pc;NONOVERLAPPING_CLAUSES] THEN
+SUBGOAL_THEN `4 divides (LENGTH mullohi_mc)`
+    (fun th -> REWRITE_TAC[MATCH_MP aligned_bytes_loaded_append th;MULLOHI_EXEC_LENGTH]) THENL [
+    REWRITE_TAC[MULLOHI_EXEC_LENGTH] THEN CONV_TAC NUM_DIVIDES_CONV;
+    ALL_TAC] THEN
+MAP_EVERY X_GEN_TAC [`pc:num`;`addr_out:int64`] THEN
+STRIP_TAC THEN
+ (* nonoverlapping *)
+X_GEN_TAC `s0:armstate` THEN
+REPEAT_N 2 STRIP_TAC THEN
+DISCH_THEN (LABEL_TAC "HEVENTUALLY") THEN
+REWRITE_TAC[eventually_n] THEN
+CONJ_TAC THENL [
+  (** SUBGOAL 1 **)
+  (* `!s'. steps arm (1 + 1 + 0) s s' ==> P s s'` *)
+  X_GEN_TAC `s_final:armstate` THEN UNDISCH_LABEL_TAC "HEVENTUALLY" THEN
+  REPEAT_I_N 0 8
+    (fun i -> EVENTUALLY_TAKE_STEP_RIGHT_FORALL_TAC
+      MULLOHI_EXEC_DECODE MULLOHI_EXEC_LENGTH `s0:armstate` i 8) THEN
+  (* match last step *)
+  ONCE_REWRITE_TAC[eventually_CASES] THEN
+  ASM_REWRITE_TAC[] THEN
+  MAP_EVERY UNDISCH_TAC
+    [`aligned_bytes_loaded s_final (word_add (word pc) (word 32))
+      barrier_inst_bytes`;
+     `read PC s_final = word (pc + 32)`] THEN
+  REWRITE_TAC[WORD_RULE`word_add (word pc) (word 32):int64 = word (pc+32)`] THEN
+  MESON_TAC[ALIGNED_BYTES_LOADED_BARRIER_ARM_STUCK];
+
+  (** SUBGOAL 2 **)
+  ONCE_REWRITE_TAC[
+    ITAUT`(!x y. P y /\ Q x y ==> R x y) <=> (!y. P y ==> !x. Q x y ==> R x y)`] THEN
+  (* Unfold forall n. *)
+  CONV_TAC EXPAND_CASES_CONV THEN
+  CONJ_TAC THENL [
+    (** SUBGOAL 1 **)
+    GEN_TAC THEN
+    SIMPLIFY_STEPS_0_TAC THEN
+    SOLVE_EXISTS_ARM_TAC MULLOHI_EXEC_DECODE;
+
+    (** SUBGOAL 2 **)
+    ALL_TAC
+  ] THEN
+  REPEAT_I_N 1 8 (fun max_nsteps ->
+    let run_tac =
+      GEN_TAC THEN
+      REPEAT_I_N 0 max_nsteps
+        (fun i ->
+          EVENTUALLY_STEPS_EXISTS_STEP_TAC MULLOHI_EXEC_DECODE
+            MULLOHI_EXEC_LENGTH i (4*(i+1))) THEN
+      SIMPLIFY_STEPS_0_TAC THEN
+      SOLVE_EXISTS_ARM_TAC MULLOHI_EXEC_DECODE THEN
+      FAIL_TAC ("Unsolved: max_nsteps = " ^ string_of_int max_nsteps) in
+
+    if max_nsteps < 7 then CONJ_TAC THENL [run_tac; ALL_TAC]
+    else run_tac)
+]

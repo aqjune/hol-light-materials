@@ -1,0 +1,10 @@
+(* Converted by thenify.py *)
+SUBGOAL_THEN `4 divides (LENGTH mullohi_mc)`
+    (fun th -> REWRITE_TAC[MATCH_MP aligned_bytes_loaded_append th]) THENL [
+  (** SUBGOAL **)
+  REWRITE_TAC[MULLOHI_EXEC_LENGTH] THEN CONV_TAC NUM_DIVIDES_CONV;
+
+  (** SUBGOAL **)
+  ALL_TAC
+] THEN
+REPEAT STRIP_TAC

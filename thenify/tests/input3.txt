@@ -1,0 +1,75 @@
+e(ONCE_REWRITE_TAC[WORD_EQ_BITS_ALT]);;
+e(REWRITE_TAC[BIT_WORD_REVERSE]);;
+e(REPEAT STRIP_TAC);;
+e(SUBGOAL_THEN `n_subword_bits * (dimindex (:N) DIV n_subword_bits - 1 - i DIV n_subword_bits) + i MOD n_subword_bits <  dimindex (:N)` ASSUME_TAC);;
+  (** SUBGOAL: my proof **)
+  e(SUBGOAL_THEN `?x. dimindex(:N) = x * n_subword_bits` CHOOSE_TAC);;
+    (** SUBGOAL that again has my proof, yes **)
+    e(ASM_MESON_TAC[MOD_EQ_0]);;
+
+    (** SUBGOAL after choose **)
+    e(ASM_REWRITE_TAC[]);;
+    e(SUBGOAL_THEN `(x * n_subword_bits) DIV n_subword_bits = x` SUBST1_TAC);;
+      (** SUBGOAL **)
+      e(REWRITE_TAC[ARITH_RULE `x * n_subword_bits = n_subword_bits * x`]);;
+      e(MATCH_MP_TAC DIV_MULT);;
+      e(ASM_ARITH_TAC);;
+      (** SUBGOAL: after substitution **)
+      e(MATCH_MP_TAC LEMMA_BOUND);;
+      e(CONJ_TAC);;
+        (** SUBGOAL **)
+        e(MP_TAC (SPECL [`n_subword_bits:num`; `i:num`; `x:num`] RDIV_LT_EQ));;
+        e(ANTS_TAC);;
+          (** SUBGOAL **)
+          e(ASM_ARITH_TAC);;
+          (** SUBGOAL **)
+          e(DISCH_TAC);;
+          e(ASM_REWRITE_TAC[]);;
+          e(ASM_ARITH_TAC);;
+
+        (** SUBGOAL of conj_tac **)
+        e(CONJ_TAC);;
+          (** SUBGOAL 1 of conj **)
+          e(REWRITE_TAC[MOD_LT_EQ]);;
+          e(ASM_ARITH_TAC);;
+          (** SUBGOAL 2 of conj **)
+          e(UNDISCH_TAC `0 < n_subword_bits`);;
+          e(SUBGOAL_THEN `~(dimindex(:N) = 0)` ASSUME_TAC);;
+            (** SUBGOAL **)
+            e(MATCH_MP_TAC LT_NZ2);;
+            e(EXISTS_TAC `i:num`);;
+            e(ASM_MESON_TAC[]);;
+            (** SUBGOAL **)
+            e(REWRITE_TAC[LT_NZ]);;
+            e(UNDISCH_TAC `~(dimindex (:N) = 0)`);;
+            e(ASM_REWRITE_TAC[]);;
+            e(REPEAT STRIP_TAC);;
+            e(SUBGOAL_THEN `~(x = 0) /\ ~(n_subword_bits = 0)` ASSUME_TAC);;
+              (** SUBGOAL **)
+              e(MATCH_MP_TAC MULT_NONZERO);;
+              e(ASM_MESON_TAC[]);;
+              (** SUBGOAL **)
+              e(ASM_MESON_TAC[]);;
+
+  (** SUBGOAL **)
+  e(ASM_SIMP_TAC[]);;
+  e(AP_THM_TAC THEN AP_TERM_TAC);;
+  e(UNDISCH_TAC `dimindex (:N) MOD n_subword_bits = 0` THEN REWRITE_TAC[REWRITE_RULE[MULT_SYM] MOD_EQ_0]
+    THEN DISCH_TAC THEN FIRST_X_ASSUM CHOOSE_TAC);;
+  e(ASM_REWRITE_TAC[]);;
+  e(IMP_REWRITE_TAC[DIV_MULT; DIV_MULT_ADD; MOD_DIV_EQ_0]);;
+  e(REWRITE_TAC[MOD_MULT_ADD; ADD_0; MOD_MOD_REFL]);;
+  e(IMP_REWRITE_TAC[SUB_SUB]);;
+  e(REWRITE_TAC[DIVISION_SIMP]);;
+  e(CONJ_TAC);;
+    (** SUBGOAL **)
+    e(UNDISCH_TAC `i < dimindex (:N)`);;
+    e(ASM_REWRITE_TAC[]);;
+    e(IMP_REWRITE_TAC[GSYM RDIV_LT_EQ]);;
+    e(ANTS_TAC);;
+      (** SUBGOAL **)
+      e(ASM_ARITH_TAC);;
+      (** SUBGOAL **)
+      e(ASM_ARITH_TAC);;
+    (** SUBGOAL **)
+    e(ASM_ARITH_TAC);;

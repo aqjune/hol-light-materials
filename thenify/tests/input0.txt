@@ -1,0 +1,3 @@
+e(REPEAT STRIP_TAC);;
+(* meson is great *)
+e(ASM_MESON_TAC[(*empty arg*)]);;

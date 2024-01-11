@@ -1,0 +1,4 @@
+(* Converted by thenify.py *)
+REPEAT STRIP_TAC THEN
+(* meson is great *)
+ASM_MESON_TAC[(*empty arg*)]

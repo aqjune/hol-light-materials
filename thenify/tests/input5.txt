@@ -1,0 +1,59 @@
+
+e(REWRITE_TAC[LENGTH_APPEND;MULLOHI_EXEC_LENGTH;BARRIER_INST_BYTES_LENGTH]);;
+e(CONV_TAC (ONCE_DEPTH_CONV NUM_DIVIDES_CONV));;
+e(REWRITE_TAC[eventually_n_at_pc;NONOVERLAPPING_CLAUSES]);;
+e(SUBGOAL_THEN `4 divides (LENGTH mullohi_mc)`
+    (fun th -> REWRITE_TAC[MATCH_MP aligned_bytes_loaded_append th;MULLOHI_EXEC_LENGTH]) THENL [
+    REWRITE_TAC[MULLOHI_EXEC_LENGTH] THEN CONV_TAC NUM_DIVIDES_CONV;
+    ALL_TAC]);;
+e(MAP_EVERY X_GEN_TAC [`pc:num`;`addr_out:int64`]);;
+e(STRIP_TAC);; (* nonoverlapping *)
+e(X_GEN_TAC `s0:armstate`);;
+e(REPEAT_N 2 STRIP_TAC);;
+e(DISCH_THEN (LABEL_TAC "HEVENTUALLY"));;
+e(REWRITE_TAC[eventually_n]);;
+e(CONJ_TAC);;
+  (** SUBGOAL 1 **)
+  (* `!s'. steps arm (1 + 1 + 0) s s' ==> P s s'` *)
+  e(X_GEN_TAC `s_final:armstate` THEN UNDISCH_LABEL_TAC "HEVENTUALLY");;
+  e(REPEAT_I_N 0 8
+    (fun i -> EVENTUALLY_TAKE_STEP_RIGHT_FORALL_TAC
+      MULLOHI_EXEC_DECODE MULLOHI_EXEC_LENGTH `s0:armstate` i 8));;
+  (* match last step *)
+  e(ONCE_REWRITE_TAC[eventually_CASES]);;
+  e(ASM_REWRITE_TAC[]);;
+  e(MAP_EVERY UNDISCH_TAC
+    [`aligned_bytes_loaded s_final (word_add (word pc) (word 32))
+      barrier_inst_bytes`;
+     `read PC s_final = word (pc + 32)`]);;
+  e(REWRITE_TAC[WORD_RULE`word_add (word pc) (word 32):int64 = word (pc+32)`]);;
+  e(MESON_TAC[ALIGNED_BYTES_LOADED_BARRIER_ARM_STUCK]);;
+
+  (** SUBGOAL 2 **)
+  e(ONCE_REWRITE_TAC[
+    ITAUT`(!x y. P y /\ Q x y ==> R x y) <=> (!y. P y ==> !x. Q x y ==> R x y)`]);;
+  (* Unfold forall n. *)
+  e(CONV_TAC EXPAND_CASES_CONV);;
+  e(CONJ_TAC);;
+    (** SUBGOAL 1 **)
+    e(GEN_TAC);;
+    e(SIMPLIFY_STEPS_0_TAC);;
+    e(SOLVE_EXISTS_ARM_TAC MULLOHI_EXEC_DECODE);;
+
+    (** SUBGOAL 2 **)
+    e(ALL_TAC);;
+
+  e(REPEAT_I_N 1 8 (fun max_nsteps ->
+    let run_tac =
+      GEN_TAC THEN
+      REPEAT_I_N 0 max_nsteps
+        (fun i ->
+          EVENTUALLY_STEPS_EXISTS_STEP_TAC MULLOHI_EXEC_DECODE
+            MULLOHI_EXEC_LENGTH i (4*(i+1))) THEN
+      SIMPLIFY_STEPS_0_TAC THEN
+      SOLVE_EXISTS_ARM_TAC MULLOHI_EXEC_DECODE THEN
+      FAIL_TAC ("Unsolved: max_nsteps = " ^ string_of_int max_nsteps) in
+
+    if max_nsteps < 7 then CONJ_TAC THENL [run_tac; ALL_TAC]
+    else run_tac));;
+

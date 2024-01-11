@@ -1,0 +1,9 @@
+(* Converted by thenify.py *)
+SUBGOAL_THEN `x + y = 10` ASSUME_TAC THENL [
+  (** SUBGOAL one **)
+  ASM_ARITH_TAC;
+
+  (** SUBGOAL 2 **)
+  EXPAND_TAC "z" THEN
+  ASM_REWRITE_TAC[]
+]

@@ -1,0 +1,7 @@
+e(SUBGOAL_THEN `x + y = 10` ASSUME_TAC);;
+  (** SUBGOAL one **)
+  e(ASM_ARITH_TAC);;
+
+  (** SUBGOAL 2 **)
+  e(EXPAND_TAC "z");;
+  e(ASM_REWRITE_TAC[]);;

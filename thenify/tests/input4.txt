@@ -1,0 +1,8 @@
+e(SUBGOAL_THEN `4 divides (LENGTH mullohi_mc)`
+    (fun th -> REWRITE_TAC[MATCH_MP aligned_bytes_loaded_append th]));;
+  (** SUBGOAL **)
+  e(REWRITE_TAC[MULLOHI_EXEC_LENGTH] THEN CONV_TAC NUM_DIVIDES_CONV);;
+  (** SUBGOAL **)
+  e(ALL_TAC);;
+
+e(REPEAT STRIP_TAC);;

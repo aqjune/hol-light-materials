@@ -133,15 +133,9 @@ Please read [HOL Light vs. Coq](HOLLightvsCoq.md).
 
 ## Misc
 
-### Thenify (experimental)
+### Thenify
 
-[thenify/thenify.py](thenify) converts a properly formatted sequence of `e(..);;` commands into the `.. THEN ..` format.
-If some tactic produces multiple subgoals, the beginning of each subgoal must be itemized with `- ` and the following
-lines must have extra indentations. Currently, the indentation string is fixed to two spaces (`  `).
-`thenify_tests/` has its inputs and `thenify.py <input.txt>` shows the then-ified output. :)
-
-This tool provides a subset of features of Tactician (http://www.proof-technologies.com/tactician/).
-The tool supports only up to OCaml 4.01 however.
+See [thenify](thenify)
 
 ### Others
 
