@@ -19,13 +19,6 @@ The OCaml REPL does not accept arrow keys by default. To resolve this. you can u
 
 Please read [Fundamentals.md](Fundamentals.md)
 
-## Basic Syntax
-
-- A pair of `num`: `num#num`
-- Optional `num`: `num option`
-- A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
-- `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
-
 ## Examples
 
 - [exercises](exercises): exercises for HOL Light
@@ -108,6 +101,26 @@ NUM_REDUCE_CONV `1 + 2 - 3` (* Note that this is 1 because it is 1 + (2 - 3)!! *
 - MOD_DOWN_CONV
 
 ### Commands
+
+Searching lemmas, help manuals
+
+```ocaml
+# search [`IMAGE`];; (* List thms that are about IMAGE prop. *)
+# search [name "ASSOC"];; (* List thms that has ASSOC in its name *)
+# help "search";;
+```
+
+Printing operators:
+
+```ocaml
+# infixes();; 
+
+val it : (string * (int * string)) list = 
+  [("<=>", (2, "right")); ("==>", (4, "right")); ("\\/", (6, "right")); 
+  ...
+```
+
+Printing AST:
 
 ```ocaml
 (* Show the AST of a term *)

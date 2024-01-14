@@ -48,3 +48,13 @@ type thm_tactic = thm -> tactic;;
     - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.hlp)
     - This allows you to prove `?x y. x = y`! (`?x` is exists x.)
 - Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
+
+## Basic Syntax
+
+- A pair of `num`: `num#num`
+- Optional `num`: `num option`
+- `:A`: type `A`
+- A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
+- `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
+
+
