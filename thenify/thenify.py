@@ -1,14 +1,17 @@
 import sys
 
+def is_comment_begin(line, idx):
+    return idx + 2 <= len(line) and line[idx:idx+2] == "(*"
+
 # If line at idx starts with '(*', return index after matching '*)'.
 def skip_comment(line, idx):
-    if line[idx:idx+2] != "(*":
+    if not is_comment_begin(line,idx):
         return idx
 
     depth = 0
     n = len(line)
     while idx < n:
-        if idx + 2 <= n and line[idx:idx+2] == "(*":
+        if is_comment_begin(line, idx):
             depth += 1
             idx += 2
         elif idx + 2 <= n and line[idx:idx+2] == "*)":
@@ -19,6 +22,24 @@ def skip_comment(line, idx):
                 return idx
         else:
             idx += 1
+    assert depth == 0, f"comment not closed: \"{line}\""
+    return idx
+
+def skip_string(line,idx):
+    n = len(line)
+    begun = False
+    while idx < n:
+        if is_comment_begin(line, idx):
+            idx = skip_comment(line, idx)
+        elif line[idx] == "\"":
+            if not begun:
+                begun = True
+                idx += 1
+            else:
+                return idx + 1
+        else:
+            idx += 1
+    assert not begun, f"string not closed:\"{line}\""
     return idx
 
 # Split line l into statements.
@@ -30,9 +51,10 @@ def tokenize_stmts(l):
   n = len(l)
   stmts = []
   while idx < n:
-      if idx + 2 <= n and l[idx:idx+2] == "(*":
+      if is_comment_begin(l,idx):
           idx = skip_comment(l, idx)
-          continue
+      elif l[idx] == '"':
+          idx = skip_string(l, idx)
       elif idx + 2 <= n and l[idx:idx+2] == ";;":
           stmts.append(l[prev_stmt_start:idx + 2])
           idx = idx + 2
@@ -80,7 +102,7 @@ def parse_statements(raw_lines):
 
     return results
 
-def get_beginning_comment (stmt):
+def get_comment_prefix (stmt):
     idx = skip_comment(stmt, 0)
     return stmt[0:idx]
 
@@ -107,11 +129,11 @@ def make_proof_tree(stmts, matched_indent):
     while len(stmts) > 0:
         indent, stmt = stmts[0]
         if indent > matched_indent:
-            assert is_subgoal_comment(get_beginning_comment(stmt)), \
+            assert is_subgoal_comment(get_comment_prefix(stmt)), \
                 f"A new subgoal must start with '(** SUBGOAL ... **)', but got '{stmt}'"
             proof_trees[-1][1].append(
                 make_proof_tree(stmts, indent))
-        elif is_subgoal_comment(get_beginning_comment(stmt)) or indent < matched_indent:
+        elif is_subgoal_comment(get_comment_prefix(stmt)) or indent < matched_indent:
             # Immediately return
             return proof_trees
         else:
@@ -130,7 +152,7 @@ def erase_e(stmt):
     stmt_e_stripped = ""
 
     while idx < n:
-        if idx + 2 <= n and stmt[idx:idx+2] == "(*":
+        if is_comment_begin(stmt, idx):
             idx = skip_comment(stmt, idx)
         elif idx + 2 <= n and stmt[idx:idx+2] == "e(":
             assert e_start_idx == None, ("Contains two e(): " + stmt)
@@ -147,12 +169,42 @@ def erase_e(stmt):
 
     return stmt_e_stripped + stmt[e_end_idx:]
 
+# If stmt needs to be encapsulated using '(' ')', do so.
+def wrap_with_parentheses(stmt):
+    # This is very heuristic at the moment.
+    idx = 0
+    n = len(stmt)
+    par_depth = 0
+    needs_par = False
+
+    while idx < n:
+        if is_comment_begin(stmt, idx):
+            idx = skip_comment(stmt, idx)
+        elif stmt[idx] == '"':
+            idx = skip_string(stmt, idx)
+        elif stmt[idx] == "(":
+            par_depth += 1
+            idx += 1
+        elif stmt[idx] == ")":
+            assert par_depth > 0
+            par_depth -= 1
+            idx += 1
+        elif idx + 3 < n and stmt[idx:].startswith("let") and \
+             stmt[idx+3].isspace() and par_depth == 0:
+            # space check..?
+            needs_par = True
+            break
+        else:
+            idx += 1
+
+    return f"({stmt})" if needs_par else stmt
+
 def proof_tree_to_str(proof_tree, indent):
     space = " " * (indent * 2)
 
     def to_str(idx):
         stmt, subtrees = proof_tree[idx]
-        stmt = erase_e(stmt)
+        stmt = wrap_with_parentheses(erase_e(stmt))
         s = space + stmt
         if subtrees != []:
             s = s + " THENL [\n"

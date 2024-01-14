@@ -1,0 +1,83 @@
+e(REPEAT STRIP_TAC);;
+e(MATCH_MP_TAC ENSURES_N_ENSURES THEN
+(* TODO: infer this automatically *)
+EXISTS_TAC `\(s:armstate). LENGTH mullohi_vec_mc DIV 4`);;
+
+e((* Prepare a 'conjunction' of MULLOHI_SPEC_ENSURES_N and MULLOHI_MULLOHI_VEC_EQUIV *)
+MP_TAC (
+  let ensures_n_part =
+      SPECL [`pc:num`;`addr_in:int64`;`addr_out:int64`;`x0:int64`;`x1:int64`;`y0:int64`;`y1:int64`]
+             MULLOHI_SPEC_ENSURES_N in
+  let equiv_part =
+      SPECL [`pc:num`;`pc2:num`;`addr_out:int64`] MULLOHI_MULLOHI_VEC_EQUIV in
+  let conj_ensures_n_equiv = CONJ ensures_n_part equiv_part in
+  MATCH_MP (TAUT`((P==>Q)/\(R==>S)) ==> ((P/\R)==>(Q/\S))`) conj_ensures_n_equiv));;
+e(IMP_REWRITE_TAC[NONOVERLAPPING_APPEND]);;
+e(DISCH_THEN (fun th -> LABEL_TAC "H" (REWRITE_RULE[] (MATCH_MP ENSURES_N_ENSURES2_CONJ th))));;
+e((* .. and apply H as a precondition of ENSURES2_ENSURES_N *)
+REMOVE_THEN "H" (fun th ->
+  let th2 = MATCH_MP
+    (REWRITE_RULE [TAUT `(P/\P2/\P3==>Q) <=> P==>P2==>P3==>Q`] ENSURES2_ENSURES_N) th in
+  MATCH_MP_TAC (REWRITE_RULE [TAUT`(P==>Q==>R) <=> (P/\Q==>R)`] th2)) THEN
+REWRITE_TAC[]);;
+e((* unravel nonoverlappings *)RULE_ASSUM_TAC (REWRITE_RULE[NONOVERLAPPING_CLAUSES]));;
+e(CONJ_TAC);;
+  (** SUBGOAL: precond **)
+  e(X_GEN_TAC `s2:armstate` THEN REPEAT STRIP_TAC);;
+  e(ASM_REWRITE_TAC[mullohi_equiv_input_states]);;
+  e(REWRITE_TAC[aligned_bytes_loaded;bytes_loaded]);;
+  e(EXISTS_TAC
+      `write (memory :> bytelist (word pc,LENGTH (APPEND mullohi_mc barrier_inst_bytes)))
+          (APPEND mullohi_mc barrier_inst_bytes) (write PC (word pc) s2)`);;
+  e(ASM_REWRITE_TAC[]);;
+  e(REPEAT CONJ_TAC);;
+    (** SUBGOAL 1: bytecode load **)
+    e(MATCH_MP_TAC READ_OVER_WRITE_MEMORY_APPEND_BYTELIST THEN
+      REWRITE_TAC[LENGTH_APPEND;MULLOHI_EXEC_LENGTH;BARRIER_INST_BYTES_LENGTH] THEN
+      ARITH_TAC);;
+    (** SUBGOAL 2: PC **)
+    e(REPEAT COMPONENT_READ_OVER_WRITE_LHS_TAC THEN REFL_TAC);;
+    (** SUBGOAL 3: input equiv **)
+    e(REPEAT_N 5 META_EXISTS_TAC);;
+    e(let resolve_meta_var =
+        (REPEAT (COMPONENT_READ_OVER_WRITE_LHS_TAC ORELSE READ_OVER_WRITE_ORTHOGONAL_TAC)) THEN
+        ASM_REWRITE_TAC[] THEN UNIFY_REFL_TAC in
+      let show_refl =
+        (MATCH_MP_TAC EQ_SYM THEN READ_OVER_WRITE_ORTHOGONAL_TAC) ORELSE REFL_TAC in
+      REPEAT CONJ_TAC THEN (TRY resolve_meta_var) THEN (TRY show_refl) THEN
+      FAIL_TAC "input equiv state unproven");;
+    (** SUBGOAL 4 **)
+    e(MATCH_MP_TAC READ_OVER_WRITE_MEMORY_BYTELIST);;
+    e(REWRITE_TAC[LENGTH_APPEND;MULLOHI_EXEC_LENGTH;BARRIER_INST_BYTES_LENGTH]);;
+    e(ARITH_TAC);;
+    (** SUBGOAL 5 **)
+    e(REPEAT COMPONENT_READ_OVER_WRITE_LHS_TAC THEN REFL_TAC);;
+    (** SUBGOAL 6 **)
+    e(EXPAND_TAC "addr_in");;
+    e(REPEAT COMPONENT_READ_OVER_WRITE_LHS_TAC THEN REFL_TAC);;
+    (** SUBGOAL 7 **)
+    e(EXPAND_TAC "addr_out");;
+    e(REPEAT COMPONENT_READ_OVER_WRITE_LHS_TAC THEN REFL_TAC);;
+    (** SUBGOAL 8 **)
+    e(EXPAND_TAC "x0");;
+    e(READ_OVER_WRITE_ORTHOGONAL_TAC);;
+    (** SUBGOAL 9 **)
+    e(EXPAND_TAC "x1");;
+    e(READ_OVER_WRITE_ORTHOGONAL_TAC);;
+    (** SUBGOAL 10 **)
+    e(EXPAND_TAC "y0");;
+    e(READ_OVER_WRITE_ORTHOGONAL_TAC);;
+    (** SUBGOAL 11 **)
+    e(EXPAND_TAC "y1");;
+    e(READ_OVER_WRITE_ORTHOGONAL_TAC);;
+  e(FAIL_TAC "first goal unproven");;
+
+  (** SUBGOAL 2 **)
+  e(CONJ_TAC);;
+    (** SUBGOAL Postcond **)
+    e(REWRITE_TAC[mullohi_equiv_output_states]);;
+    e(REPEAT STRIP_TAC THEN ASM_MESON_TAC[]);;
+
+    (** SUBGOAL frame **)
+    e(MESON_TAC[]);;
+
