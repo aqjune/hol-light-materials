@@ -1,6 +1,2 @@
-  mov x0, xzr
-loop:
-  add x0, x0, #1
-  cmp x0, #3
-  bne loop
-
+add x2, x1, x0
+sub x2, x2, x1
