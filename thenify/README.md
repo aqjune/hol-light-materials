@@ -1,6 +1,6 @@
 ### Thenify
 
-[thenify/thenify.py](thenify) converts a properly formatted sequence of `e(..);;` commands into the `.. THEN ..` format.
+[thenify.py](thenify) converts a properly formatted sequence of `e(..);;` commands into the `.. THEN ..` format.
 If some tactic produces multiple subgoals, each subgoal must have extra indentation
 of two spaces and start with `(** SUBGOAL(..your description..) **)`.
 `tests/` has its inputs and `thenify.py <input.txt>` shows the then-ified output.
