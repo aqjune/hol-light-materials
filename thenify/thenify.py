@@ -227,9 +227,13 @@ def proof_tree_to_str(proof_tree, indent):
 
     return code
 
-
-f = open(sys.argv[1], "r")
-raw_lines = list(f.readlines())
+raw_lines = []
+if sys.argv[1] != "-i":
+  f = open(sys.argv[1], "r")
+  raw_lines = list(f.readlines())
+else:
+  for line in sys.stdin:
+    raw_lines.append(line)
 
 statements = parse_statements(raw_lines)
 proof_tree = make_proof_tree(statements, statements[0][0])

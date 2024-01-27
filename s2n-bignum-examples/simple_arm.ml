@@ -53,7 +53,7 @@ let SIMPLE_SPEC = prove(
   ENSURES_INIT_TAC "s0" THEN
   (* Symbolically run two instructions *)
   ARM_STEPS_TAC EXEC (1--2) THEN
-  (* Try to prove the postcondition as much as possible *)
+  (* Try to prove the postcondition and frame as much as possible *)
   ENSURES_FINAL_STATE_TAC THEN
   (* Use ASM_REWRITE_TAC[] to rewrite the goal using equalities in assumptions. *)
   ASM_REWRITE_TAC[] THEN
