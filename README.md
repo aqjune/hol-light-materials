@@ -31,18 +31,11 @@ Please read [Fundamentals.md](Fundamentals.md)
 See [PlayingWithAssumptions.md](PlayingWithAssumptions.md).
 
 
-### How to Use Rewrite Tactic Well
+### How to Use Rewrite Tactics Well
 
 See [RewriteTac.md](RewriteTac.md) (note: this is WIP)
 
 ### Useful Custom Tactics
-
-#### Goal Printer
-
-```ocaml
-let PRINT_GOAL_TAC (desc: string): tactic =
-  fun gl -> let _ = Printf.printf "<%s>\n" desc; print_goal gl in ALL_TAC gl;;
-```
 
 #### Rewrite assumptions
 

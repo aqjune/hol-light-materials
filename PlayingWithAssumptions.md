@@ -1,11 +1,17 @@
 # Playing with Assumptions in HOL Light
 
+## How to name assumptions and use them
+
 Unlike Coq, assumptions in HOL Light do not have names by default.
 This can be frustrating if you are already familiar with Coq-style proof because you cannot 'pick' an assumption and use it or update it.
-There are several ways to deal with this.
+This section describes several tips.
 
-A direct solution is to explicitly name the assumption using `LABEL_TAC`.
-If the goal is `.. |- P ==> Q`, you can `intro Hname` in Coq using `DISCH_THEN(LABEL_TAC "Hname")` in HOL Light.
+### Naming assumptions.
+
+A simplest solution is to label all existing assumptions at once using `NAME_ASSUMS_TAC`.
+This will simply assign names `H0`, `H1`, ... to all unnamed assumptions.
+
+If the goal is `.. |- P ==> Q`, you can do `intro Hname` in Coq using `DISCH_THEN(LABEL_TAC "Hname")` in HOL Light.
 This will make the goal look like this:
 
 ```
@@ -15,9 +21,10 @@ This will make the goal look like this:
 
 `Q`
 ```
-
 While introducing `P`, you can apply some transformations on-the-fly.
 For example, `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0])` introduces `P` and rewrites the assumption using a set of rewrite rules (`MOD_EQ_0` in this case).
+
+### Picking and using named assumptions
 
 To pick Hname, you can use `USE_THEN "Hname"` as follows:
 
@@ -39,11 +46,11 @@ If you want to use the assumption and remove it, you can use `REMOVE_THEN`.
 REMOVE_THEN "Hmcases" (CHOOSE_THEN (LABEL_TAC "Hmcases'"))
 ```
 
-However, this solution may not work if you have a large codebase that already introduces a lot of unnamed assumptions.
-Also, this does not explain how to pick one assumption and modify the assumption.
-There are several solutions in these cases.
+## Using Unnamed Assumptions
 
-## Using Assumption(s) to Update the Conclusion
+Or, you can decide to adopt the proof style of HOL Light and use unnamed assumptions only.
+
+### Using assumption(s) to update the conclusion
 
 The first kinds of tactics that you can try is the `ASM_*` tactics.
 - To solve an arithmetic lemma, you might want to use `ARITH_TAC` (and its family tactics) which is analogous to the `lia` and `nia` tactics in Coq. 
@@ -74,7 +81,7 @@ Or, if you can avoid explicitly choosing, you can do follows:
 - Or, you can write your own tactic because tactic can be written as `fun (assumption_list, goal_term) -> (* body *)`.
 
 
-## Using Assumption(s) to Update Other Assumptions
+### Using assumption(s) to update other assumptions
 
 If you want to modify other assumptions using some assumption, you can use `RULE_ASSUM_TAC`.
 
@@ -90,9 +97,9 @@ If you want to rewrite both conclusion and assumptions:
 (* Rewrite k4 in every place into 0. *)
 UNDISCH_THEN `k4 = 0` SUBST_ALL_TAC
 ```
-
-For more elaborate update, a common pattern that HOL Light proofs use is to keep the assumption of interest at
-the left hand side of implication:
+Or, you can use the conclusion as a 'scratchpad', by converting `asm |- concl` into `|- asm ==> concl`
+and using tactics that apply to the conclusion.
+This is a pattern frequently appearing in HOL Light proofs:
 ```
   0 [`x = 0`]
   1 [`f x = 10`]
@@ -104,13 +111,14 @@ the left hand side of implication:
   0 [`x = 0`]
 
 `f x = 10 ==> f (f x) = 20`
-
-(Now you can use any tactic that applies to the conclusion)
 ```
 
-## Removing Unnecessary Assumptions
+Now you can use tactics that applies to the conclusion, or pick up the assumption using `DISCH_THEN`.
 
-You can define a custom tactic that is analogous to the one in s2n-bignum ([link](https://github.com/awslabs/s2n-bignum/blob/b0aa5e4bc2b897cfa4b5d5d5e49c94f371afd0be/arm/proofs/arm.ml#L405-L410)):
+### Removing a specific, unnamed assumption
+
+You can use a pattern matcher.
+Define a custom tactic that is analogous to the one in s2n-bignum ([link](https://github.com/awslabs/s2n-bignum/blob/b0aa5e4bc2b897cfa4b5d5d5e49c94f371afd0be/arm/proofs/arm.ml#L405-L410)):
 
 ```ocaml
 let DISCARD_ASSUMPTIONS_TAC P =
