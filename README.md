@@ -149,3 +149,8 @@ See [thenify](thenify)
 (* Given an OCaml string 'name' and term 'tm', make a definition `name = tm` *)
 new_definition (mk_eq (mk_var (name, `:(..type..)`), tm))
 ```
+
+### VSCode HOL Light Plugin
+
+How to use `.ml`: Ctrl+Shift+P -> Change Language Mode -> Configure File Association for '.ml'... -> choose HOL Light
+
