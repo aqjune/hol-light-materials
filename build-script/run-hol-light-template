@@ -1,4 +1,0 @@
-#!/bin/bash
-eval $(opam env --switch __DIR --set-switch)
-export HOLLIGHT_DIR=__DIR
-ledit __OCAML -init $HOLLIGHT_DIR/hol.ml
