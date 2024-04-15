@@ -28,25 +28,45 @@ document has more info.
 ### Building the rewrite rule on-the-fly
 
 If you think the rewrite rule that you want to use is too specific to the case,
-you can build the rewrite rule on-the-fly using various conversions.
+you can build the rewrite rule on-the-fly using various `*_RULE` functions.
 
 For example, if you want to apply a rewrite rule `x * (y + z + w) = x * y + x * z + x * w` on
 some natural number expression,
-you can use `ARITH_RULE` conversion as follows:
+you can use `ARITH_RULE` as follows:
 
 ```ocaml
 e(REWRITE_TAC[ARITH_RULE `x * (y + z + w) = x * y + x * z + x * w`]);;
 ```
 
-Useful conversions are:
+Useful rules are:
 - `ARITH_RULE`: for natural numbers
 - `INT_ARITH`: for integers
 - `REAL_ARITH`: for real numbers
 - `TAUT`: for tautology (see [TAUT](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/TAUT.html))
 - `MESON[]`, `METIS[]`: for first-order logic (see [MESON](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/MESON.html),
 [METIS](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/METIS.html)) 
-- `REWRITE_CONV[]`: a conversion to create a rewrite rule using other rewrite rules on the fly! (see [REWRITE_CONV](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/REWRITE_CONV.html))
 - `WORD_RULE`, `WORD_ARITH`, `WORD_BITWISE_RULE`, `WORD_BLAST`, `BITBLALST_RULE`: for bit-vectors (`N word` type)
+
+#### Conversions.
+
+Assuming that some equality `e = e'` is the rewrite rule that you want to create on-the-fly,
+if `e'` is supposed to be a typical result of some known simplicification of `e`, you can use conversions.
+For example, ``NUM_REDUCE_CONV `1 + 2` `` returns a new rewrite rule `` `1 + 2 = 3` ``, and you can use it
+to rewrite any `1 + 2` in the conclusion with `3`.
+
+```ocaml
+# NUM_REDUCE_CONV `1 + 2`;;
+val it : thm = |- 1 + 2 = 3
+```
+
+Note that `` ARITH_RULE `1 + 2 = 3` `` will create the same rewrite rule too.
+However, unlike `NUM_REDUCE_CONV`, you need to explicitly give the result of addition at the right-hand side,
+which can be cumbersome.
+
+- `NUM_REDUCE_CONV`: takes a term `t` which is a numerical expression and creates `t = t'` where `t'` is the
+calculated result of `t`.
+- `REWRITE_CONV[]`: a conversion to create a rewrite rule using other rewrite rules on the fly! (see [REWRITE_CONV](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/REWRITE_CONV.html))
+
 
 ### Choosing an assumption as a rewrite rule
 
