@@ -16,6 +16,15 @@ eval $(opam env)
 
 The OCaml REPL does not accept arrow keys by default. To resolve this. you can use ledit (https://opam.ocaml.org/packages/ledit/) and use ledit ocaml instead. ledit can be installed using either apt install ledit or opam install ledit, then do `export LINE_EDITOR=ledit` before calling `hol.sh`.
 
+## Editors
+
+- VSCode: [vscode-hol-light](https://github.com/monadius/vscode-hol-light)
+  - Download the .vsix file from https://github.com/monadius/vscode-hol-light/releases and install it
+    on your VSCode ([how-to](https://community.particle.io/t/how-to-install-a-vscode-extension-from-a-vsix-file/51014))
+  - By default, it will recognize `.hl` as a file extension for HOL Light. You will want to change this to `.ml` 
+    Ctrl+Shift+P → Change Language Mode → Configure File Association for '.ml'... → choose HOL Light
+- Emacs: [hol-light-emacs](https://github.com/gilith/hol-light-emacs)
+
 ## Fundamentals
 
 Please read [Fundamentals.md](Fundamentals.md)
@@ -25,16 +34,26 @@ Please read [Fundamentals.md](Fundamentals.md)
 - [exercises](exercises): exercises for HOL Light
 - [s2n-bignum-examples](s2n-bignum-examples): examples for proving assembly programs in s2n-bignum
 
-## Useful & Easy Tricks
+## How-to
 
-### Using or Updating Assumptions in HOL Light
+- [Use or update assumptions in HOL Light](PlayingWithAssumptions.md).
 
-See [PlayingWithAssumptions.md](PlayingWithAssumptions.md).
+- [How to use rewrite tactics well](RewriteTac.md)
+
+## Internal Representation of Terms
+
+Please read [AST.md](AST.md).
+
+## HOL Light vs. Coq
+
+Please read [HOL Light vs. Coq](HOLLightvsCoq.md).
 
 
-### How to Use Rewrite Tactics Well
+## Misc
 
-See [RewriteTac.md](RewriteTac.md) (note: this is WIP)
+### Thenify
+
+See [thenify](thenify)
 
 ### Useful Custom Tactics
 
@@ -129,29 +148,7 @@ loads "Library/words.ml":;
 #install_printer pp_print_qtype;;
 ```
 
-## Internal Representation of Terms
-
-Please read [AST.md](AST.md).
-
-## HOL Light vs. Coq
-
-Please read [HOL Light vs. Coq](HOLLightvsCoq.md).
-
-
-## Misc
-
-### Thenify
-
-See [thenify](thenify)
-
-### Others
-
 ```ocaml
 (* Given an OCaml string 'name' and term 'tm', make a definition `name = tm` *)
 new_definition (mk_eq (mk_var (name, `:(..type..)`), tm))
 ```
-
-### VSCode HOL Light Plugin
-
-How to use `.ml`: Ctrl+Shift+P -> Change Language Mode -> Configure File Association for '.ml'... -> choose HOL Light
-

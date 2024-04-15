@@ -1,5 +1,31 @@
 # Fundamentals of HOL Light
 
+- Proposition is simply bool.
+    - Truth has a bool type (`` type_of `T` `` is bool)
+    - `TAUT` allows excluded middle. Double negation elimination (`~~P -> P`) is allowed
+- Allows functional extensionality.
+- Unbound variables are considered as universally quantified variables
+    - ex) Goal `x + 0 = x` is valid, and it means `!x. x + 0 = x`
+- `!P` (which is `forall x, P x` in Coq) is equivalent to `(P = \x. true)`.
+    - Therefore, `!` is `\P. (P = \x. true)`.
+- Unlike Coq, you cannot define a type of an empty element (`False` in Coq)
+    - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.hlp)
+    - This allows you to prove `?x y. x = y`! (`?x` is exists x.)
+- Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
+- `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
+
+## Basic Syntax
+
+- `:A`: type `A`
+- A pair of `num`: `num#num`
+- Optional `num`: `num option`
+- A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
+
+
+## Definitions
+
+Types, terms and theorems:
+
 ```ocaml
 (* Location: fusion.ml *)
 (* type is a type *)
@@ -16,14 +42,7 @@ type term = Var of string * hol_type
 type thm = Sequent of (term list * term)
 ```
 
-```ocaml
-(* Location: equal.ml *)
-(* conv (conversion) is simply an inference rule of type term -> thm that when given
-   a term t, always returns (assuming it doesn’t fail) an equational theorem of the form
-   `t = t′, that is, it proves that the term it was given is equal to some other term,
-   possibly the same as the original. *)
-type conv = term->thm;;
-```
+Definitions for interactive proof-writing:
 
 ```ocaml
 (* Location: tactics.ml *)
@@ -36,25 +55,14 @@ type tactic = goal -> goalstate;;
 type thm_tactic = thm -> tactic;;
 ```
 
-- Proposition is simply bool.
-    - Truth has a bool type (`` type_of `T` `` is bool)
-    - `TAUT` allows excluded middle. Double negation elimination (`~~P -> P`) is allowed
-- Allows functional extensionality
-- Unbound variables are considered as universally quantified variables
-    - ex) Goal `x + 0 = x` is valid, and it means `!x. x + 0 = x`
-- `!P` (which is `forall x, P x` in Coq) is equivalent to `(P = \x. true)`.
-    - Therefore, `!` is `\P. (P = \x. true)`.
-- Unlike Coq, you cannot define a type of an empty element (`False` in Coq)
-    - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.hlp)
-    - This allows you to prove `?x y. x = y`! (`?x` is exists x.)
-- Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
+Conversion from a term to a theorem:
 
-## Basic Syntax
-
-- A pair of `num`: `num#num`
-- Optional `num`: `num option`
-- `:A`: type `A`
-- A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
-- `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
-
+```ocaml
+(* Location: equal.ml *)
+(* conv (conversion) is simply an inference rule of type term -> thm that when given
+   a term t, always returns (assuming it doesn’t fail) an equational theorem of the form
+   `t = t′, that is, it proves that the term it was given is equal to some other term,
+   possibly the same as the original. *)
+type conv = term->thm;;
+```
 
