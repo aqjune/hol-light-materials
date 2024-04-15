@@ -10,10 +10,11 @@ Online materials for HOL Light:
 cd build-script
 ./clone-and-build-hollight.sh
 cd hol-light
-./run-hol-light
+eval $(opam env)
+./hol.sh
 ```
 
-The OCaml REPL does not accept arrow keys by default. To resolve this. you can use ledit (https://opam.ocaml.org/packages/ledit/) and use ledit ocaml instead. ledit can be installed using either apt install ledit or opam install ledit.
+The OCaml REPL does not accept arrow keys by default. To resolve this. you can use ledit (https://opam.ocaml.org/packages/ledit/) and use ledit ocaml instead. ledit can be installed using either apt install ledit or opam install ledit, then do `export LINE_EDITOR=ledit` before calling `hol.sh`.
 
 ## Fundamentals
 
