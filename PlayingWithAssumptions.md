@@ -1,27 +1,50 @@
 # Playing with Assumptions in HOL Light
 
-## How to name assumptions and use them
-
 Unlike Coq, assumptions in HOL Light do not have names by default.
-This can be frustrating if you are already familiar with Coq-style proof because you cannot 'pick' an assumption and use it or update it.
-This section describes several tips.
+You can name the assumptions using several existing tactics and use the named assumptions by picking them.
+On the other hand, you can choose unnamed assumption style and write proofs because it can be more
+convenient.
+This document explains tactics that can be used in each proof style.
+
+## 1. How to name assumptions and use them
 
 ### Naming assumptions.
 
 A simplest solution is to label all existing assumptions at once using `NAME_ASSUMS_TAC`.
 This will simply assign names `H0`, `H1`, ... to all unnamed assumptions.
 
-If the goal is `.. |- P ==> Q`, you can do `intro Hname` in Coq using `DISCH_THEN(LABEL_TAC "Hname")` in HOL Light.
-This will make the goal look like this:
+If the goal is `.. |- P ==> Q`, you can do `intro Hname` in Coq using `INTRO_TAC "Hname"` in HOL Light.
 
+```ocaml
+# g `x = 0 ==> x + 1 = 1`;;
+Warning: Free variables in goal: x
+val it : goalstack = 1 subgoal (1 total)
+
+`x = 0 ==> x + 1 = 1`
+
+# e(INTRO_TAC "Hx");;
+val it : goalstack = 1 subgoal (1 total)
+
+  0 [`x = 0`] (Hx)
+
+`x + 1 = 1`
 ```
-- : goalstack = 1 subgoal (1 total)
 
-  0 [`P`] (Hname)
+The string argument of `INTRO_TAC` can actually be some pattern that can introduce
+multiple assumptions (and universally quantified variables) at once.
+Also, HOL Light has two more tactics `DESTRUCT_TAC` and `CLAIM_TAC` that are useful in
+different cases and can be used to introduce named assumptions.
+(doc:
+[INTRO_TAC](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/INTRO_TAC.html),
+[DESTRUCT_TAC](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/DESTRUCT_TAC.html) and
+[CLAIM_TAC](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/CLAIM_TAC.html))
 
-`Q`
-```
-While introducing `P`, you can apply some transformations on-the-fly.
+Or, in a slightly lower level, you can use `DISCH_THEN(LABEL_TAC "Hname")` in HOL Light.
+
+`DISCH_THEN` picks the antecedent `P` of the conclusion, and pass it to `LABEL_TAC "Hname"`.
+The first argument of `DISCH_THEN` is actually a lambda function that takes a theorem and returns a tactic.
+
+While introducing `P`, you can apply some transformations to the assumption on-the-fly.
 For example, `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0])` introduces `P` and rewrites the assumption using a set of rewrite rules (`MOD_EQ_0` in this case).
 
 ### Picking and using named assumptions
@@ -29,14 +52,16 @@ For example, `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0])` introduces
 To pick Hname, you can use `USE_THEN "Hname"` as follows:
 
 ```ocaml
+(* Pick an assumption "H" and add it as an antecedent of the conclusion. *)
+USE_THEN "H" MP_TAC
+```
+
+The second argument of `USE_THEN` is actually a lambda function that takes a theorem and returns a tactic.
+
+```ocaml
 (* Pick an assumption "Hx0lt" (which becomes the 'thm' variable), and rewrite the goal using an equation
    'MATCH_MP add_64_32_mod_32_eq thm'. Note that add_64_32_mod_32_eq is some P -> Q, and thm is matched to P. *)
 USE_THEN "Hx0lt" (fun thm -> REWRITE_TAC[MATCH_MP add_64_32_mod_32_eq thm])
-```
-
-```ocaml
-(* Pick an assumption "H" and generalize it. *)
-USE_THEN "H" MP_TAC
 ```
 
 If you want to use the assumption and remove it, you can use `REMOVE_THEN`. 
@@ -46,9 +71,7 @@ If you want to use the assumption and remove it, you can use `REMOVE_THEN`.
 REMOVE_THEN "Hmcases" (CHOOSE_THEN (LABEL_TAC "Hmcases'"))
 ```
 
-## Using Unnamed Assumptions
-
-Or, you can decide to adopt the proof style of HOL Light and use unnamed assumptions only.
+## 2. Using Unnamed Assumptions
 
 ### Using assumption(s) to update the conclusion
 
