@@ -28,7 +28,8 @@ The OCaml REPL does not accept arrow keys by default. To resolve this. you can u
 ## How-to
 
 - [Use or update assumptions in HOL Light](PlayingWithAssumptions.md).
-- [How to use rewrite tactics well](RewriteTac.md)
+- [Use rewrite tactics well](RewriteTac.md)
+- [Prove 'trivial' goals](ProvingTrivialGoals.md)
 
 ## [HOL Light vs. Coq](HOLLightvsCoq.md)
 

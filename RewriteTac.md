@@ -5,7 +5,7 @@
 The first thing that you will want to do when using `REWRITE_TAC` or its family tactic is
 to find out which rewrite rules to apply.
 
-### Using `search`
+### A. Using `search`
 
 If you think someone has already proven the rewrite rule as a lemma because it is a well
 known property, you can search it using the `search` command.
@@ -25,7 +25,7 @@ You can also give `name "..."` as an argument to `search` to choose theorems tha
 have the string in their names. The [help](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/search.html)
 document has more info.
 
-### Building the rewrite rule on-the-fly
+### B. Building the rewrite rule on-the-fly
 
 If you think the rewrite rule that you want to use is too specific to the case,
 you can build the rewrite rule on-the-fly using various `*_RULE` functions.
@@ -68,7 +68,38 @@ calculated result of `t`.
 - `REWRITE_CONV[]`: a conversion to create a rewrite rule using other rewrite rules on the fly! (see [REWRITE_CONV](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/REWRITE_CONV.html))
 
 
-### Choosing an assumption as a rewrite rule
+### C. Deriving the rewrite rule from existing rules on-the-fly
+
+If you could find rewrite rules that look relevant to what you wanted,
+you can try to derive your wanted rule using them.
+
+- `GSYM`: If you found `my_thm` saying `e1 = e2`, but you wanted `e2 = e1`, `GSYM my_thm` will return `e2 = e1`.
+```ocaml
+# ADD_ASSOC;;
+val it : thm = |- !m n p. m + n + p = (m + n) + p
+# GSYM ADD_ASSOC;;
+val it : thm = |- !m n p. (m + n) + p = m + n + p
+```
+- `TRANS`: If you found `thm1` which is `e1 = e2` and `thm2` which is `e2 = e3`, `TRANS thm1 thm2` will return `e1 = e3`.
+```ocaml
+# TRANS (ARITH_RULE `1 + 1 = 2`) (ARITH_RULE `2 = 0 + 2`);;
+val it : thm = |- 1 + 1 = 0 + 2
+```
+- `MATCH_MP`: If `thm1` is `P ==> e1 = e2` and `thm2` is `P`, `MATCH_MP thm1 thm2` will return `e1 = e2`.
+  `MATCH_MP` can specialize universally quantified variables.
+```ocaml
+# MOD_LT;;
+val it : thm = |- !m n. m < n ==> m MOD n = m
+# MATCH_MP MOD_LT (ARITH_RULE `1 < 2`);;
+val it : thm = |- 1 MOD 2 = 1
+```
+- `REWRITE_RULE`: `REWRITE_RULE[rewrite_rules] rule0` returns a new rewrite rule that is a result of rewriting
+`rewrite_rules` at `rule0` (see [REWRITE_RULE](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/REWRITE_RULE.html)).
+
+
+### D. Choosing an assumption as a rewrite rule
+
+If the rewrite rule you want to apply already exists as an assumption, you can use it using a proper tactic.
 
 If you want to apply all available rewrite rules in assumption, `ASM_REWRITE_TAC[]` is the right tactic.
 
