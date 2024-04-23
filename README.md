@@ -18,11 +18,7 @@ The OCaml REPL does not accept arrow keys by default. To resolve this. you can u
 
 ## Editors
 
-- VSCode: [vscode-hol-light](https://github.com/monadius/vscode-hol-light)
-  - Download the .vsix file from https://github.com/monadius/vscode-hol-light/releases and install it
-    on your VSCode ([how-to](https://community.particle.io/t/how-to-install-a-vscode-extension-from-a-vsix-file/51014))
-  - By default, it will recognize `.hl` as a file extension for HOL Light. You will want to change this to `.ml` 
-    Ctrl+Shift+P → Change Language Mode → Configure File Association for '.ml'... → choose HOL Light
+- VSCode: [vscode-hol-light](https://github.com/monadius/vscode-hol-light) is available at VSCode Marketplace.
 - Emacs: [hol-light-emacs](https://github.com/gilith/hol-light-emacs)
 
 ## How-to
