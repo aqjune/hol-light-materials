@@ -16,6 +16,10 @@ eval $(opam env)
 
 The OCaml REPL does not accept arrow keys by default. To resolve this. you can use ledit (https://opam.ocaml.org/packages/ledit/) and use ledit ocaml instead. ledit can be installed using either apt install ledit or opam install ledit, then do `export LINE_EDITOR=ledit` before calling `hol.sh`.
 
+For checkpointing, DMTCP is recommended (README of HOL Light has more instructions).
+Once `dmtcp_restart_script.sh` is created, you can create multiple instances of HOL Light by
+starting the script with distinct ports `-p <port number>`.
+
 ## Editors
 
 - VSCode: [vscode-hol-light](https://github.com/monadius/vscode-hol-light) is available at VSCode Marketplace.
