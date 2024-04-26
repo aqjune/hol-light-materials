@@ -107,13 +107,16 @@ Or, if you can avoid explicitly choosing, you can do follows:
 ### Using assumption(s) to update other assumptions
 
 If you want to modify other assumptions using some assumption, you can use `RULE_ASSUM_TAC`.
+Combined with the tactics picking a desired assumption that are explained above, this can be achieved.
 
 ```ocaml
-(* Apply the DIMINDEX_32 rewrite rule to every assumption. *)
-RULE_ASSUM_TAC (REWRITE_RULE [DIMINDEX_32])
+(* Pick "my_hyp" assumption and apply the rewrite rule to every assumption. *)
+USE_THEN "my_hyp" (fun my_hyp -> RULE_ASSUM_TAC (REWRITE_RULE [my_hyp]))
+(* Pick existing assumption `x + y = 10` and apply the rewrite rule to every assumption including itself. *)
+RULE_ASSUM_TAC (REWRITE_RULE [ASSUME `x + y = 10`])
 ```
 
-Combined with the tactics picking a desired assumption that are explained above, this can be achieved.
+You can also use `SUBST_ALL_TAC` as well as `SUBST1_TAC`.
 
 If you want to rewrite both conclusion and assumptions:
 ```ocaml
