@@ -44,8 +44,14 @@ Or, in a slightly lower level, you can use `DISCH_THEN(LABEL_TAC "Hname")` in HO
 `DISCH_THEN` picks the antecedent `P` of the conclusion, and pass it to `LABEL_TAC "Hname"`.
 The first argument of `DISCH_THEN` is actually a lambda function that takes a theorem and returns a tactic.
 
+Note that a lambda function in OCaml has a syntax `fun (arg:type) -> body`.
+`DISCH_THEN(LABEL_TAC "Hname")` is therefore fully equivalent to `DISCH_THEN(fun (th:thm) -> LABEL_TAC "Hname" th)`.
+In HOL Light, we use a term 'theorem-tactic' to indicate a lambda function that takes one `thm`-typed argument and returns a tactic.
+Its OCaml type is `thm -> tactic`, but in many documents (including this doc) it is informally abbreviated as `ttac`.
+
 While introducing `P`, you can apply some transformations to the assumption on-the-fly.
 For example, `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0])` introduces `P` and rewrites the assumption using a set of rewrite rules (`MOD_EQ_0` in this case).
+`o` is an operator that composes two functions.
 
 ### Picking and using named assumptions
 
@@ -71,39 +77,6 @@ If you want to use the assumption and remove it, you can use `REMOVE_THEN`.
 REMOVE_THEN "Hmcases" (CHOOSE_THEN (LABEL_TAC "Hmcases'"))
 ```
 
-## 2. Using Unnamed Assumptions
-
-### Using assumption(s) to update the conclusion
-
-The first kinds of tactics that you can try is the `ASM_*` tactics.
-- To solve an arithmetic lemma, you might want to use `ARITH_TAC` (and its family tactics) which is analogous to the `lia` and `nia` tactics in Coq. 
-However, `ARITH_TAC` does not consider the equalities/relational equations in the assumptions unlike the Coq tactics.
-In this case, `ASM_ARITH_TAC` will resolve the issue.
-- If you are aware that using the rewrite rules in the assumptions as well as the commutativity property of addition should solve the goal, you can use `ASM_REWRITE_TAC[ADD_SYM]`.
-- If the rewrite rules contain conditional rules (`c ==> l = r`), you can use `ASM_SIMP_TAC[..]`.
-`ASM_SIMP_TAC` first tries to prove `c` using the assumptions as well as the provided rewrite rules, and if it succeeds, it will rewrite `l` in the goal with `r`.
-The table in Tactics in HOL Light vs. Coq describes the differences between `SIMP_TAC` and `REWRITE_TAC`.
-- If the `c` assumption cannot be simply proved via rewritings, you can use `IMP_REWRITE_TAC[..]`.
-- If the goal is a first-order logic problem, you can use `ASM_MESON_TAC[..]`.
-
-If the `ASM_*` tactics are too coarse-grained to solve the goal, you can use tactics that picks an assumption matching some pre-defined pattern + does some behavior.
-- `EXPAND_TAC "x"` finds the assumption of form `e = x` and rewrites all `x` in the conclusion with `e`.
-However, this tactic does not rewrite `x` in the assumptions.
-
-Or, you can explicitly pick the expression assumption and do something with it.
-- You can directly pick up an assumption using its definition using `ASSUME`.
-For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
-- If you want a more general version, you can use `UNDISCH_THEN`, e.g., ``UNDISCH_THEN `k4 = 0` (fun thm -> REWRITE_TAC[thm])``.
-Note that this will remove the assumption too.
-
-Or, if you can avoid explicitly choosing, you can do follows:
-- You can use `FIRST_ASSUM ttac` where `ttac` is `thm -> tactic`.
-`FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
-- You can iterate over assumptions using `EVERY_ASSUM ttac`. For example, `EVERY_ASSUM (fun thm -> REWRITE_TAC[GSYM thm])` is equivalent to `ASM_REWRITE_TAC[]` modulo the rewrite direction (`<-` rather than `->`).
-- You can get a list of assumptions using `ASSUM_LIST` and do something with it.
-- Or, you can write your own tactic because tactic can be written as `fun (assumption_list, goal_term) -> (* body *)`.
-
-
 ### Using assumption(s) to update other assumptions
 
 If you want to modify other assumptions using some assumption, you can use `RULE_ASSUM_TAC`.
@@ -112,6 +85,57 @@ Combined with the tactics picking a desired assumption that are explained above,
 ```ocaml
 (* Pick "my_hyp" assumption and apply the rewrite rule to every assumption. *)
 USE_THEN "my_hyp" (fun my_hyp -> RULE_ASSUM_TAC (REWRITE_RULE [my_hyp]))
+```
+
+## 2. Using Unnamed Assumptions
+
+### Using all assumption(s) to update the conclusion
+
+The first kinds of tactics that you can try is the `ASM_*` tactics.
+This simply uses all assumptions to update the conclusion.
+
+- The probably most famous tactic in this area is `ASM_REWRITE_TAC[<rules>]`, which
+rewrites the conclusion using whole assumptions as well as the additional rewrite rules `<rules>`.
+- `ASM_ARITH_TAC` proves a goal that is an arithmetic expression such as `(x + y) * (x + y) = x * x + 2 * x * y + y * y`.
+Note that the more basic tactic `ARITH_TAC` simply ignores all existing assumptions. Similarly, there are `ASM_REAL_ARITH_TAC` and `ASM_INT_ARITH_TAC`.
+- If the rewrite rules contain conditional rules (`c ==> l = r`), you can use `ASM_SIMP_TAC[..]`.
+`ASM_SIMP_TAC` first tries to prove `c` using the assumptions as well as the provided rewrite rules, and if it succeeds, it will rewrite `l` in the goal with `r`.
+The table in Tactics in HOL Light vs. Coq describes the differences between `SIMP_TAC` and `REWRITE_TAC`. If the `c` assumption cannot be simply proved via rewritings, you can use `IMP_REWRITE_TAC[..]` which also uses assumptions.
+To know more about how to use conditional rewrite rules, please refer to [RewriteTac.md](RewriteTac.md).
+- If the goal is a first-order logic problem, you can use `ASM_MESON_TAC[..]` or `ASM_METIS_TAC[]`.
+
+If you want to iterate over all assumptions and apply a tactic using each of those:
+
+- You can use `EVERY_ASSUM ttac`. For example, `EVERY_ASSUM (fun thm -> REWRITE_TAC[GSYM thm])` is equivalent to `ASM_REWRITE_TAC[]` modulo the rewrite direction (`<-` rather than `->`).
+
+### Using some assumption(s) to update the conclusion
+
+You can pick an assumption by giving a pattern and use the assumption.
+This can be done by either composing two tactics each of which does step by step, or using one tactic that has the combined behavior.
+
+However, this tactic does not rewrite `x` in the assumptions.
+- You can directly pick up an assumption using its definition using `ASSUME`.
+For example, if the goal is `x = 0 |- 1 = x + 1`, you can rewrite `x` using ``REWRITE_TAC[ASSUME `x = 0`]``.
+- If you want to immediately remove the assumption after picking and using it, you can use `UNDISCH_THEN`, e.g., ``UNDISCH_THEN `k4 = 0` (fun (t:thm) -> REWRITE_TAC[t])``.
+Note that this will remove the assumption too.
+- `EXPAND_TAC "x"` finds the assumption of form `e = x` and rewrites all `x` in the conclusion with `e`.
+
+If what you want to do with an assumption is pretty complicated that it is obvious there will be only one assumption that will successfully finish the behavior, you can do is choosing `FIRST_{X_}ASSUM`:
+
+- You can use `FIRST_ASSUM ttac`.
+`FIRST_X_ASSUM ttac` is equivalent to `FIRST_ASSUM ttac` except that the used assumption is removed.
+
+If you want to get the whole list assumption:
+
+- You can use `ASSUM_LIST` and do something with it in a low level.
+
+
+### Using assumption(s) to update other assumptions
+
+If you want to rewrite other assumptions using some assumption, you can use `RULE_ASSUM_TAC`.
+Combined with the tactics picking a desired assumption that are explained above, this can be achieved.
+
+```ocaml
 (* Pick existing assumption `x + y = 10` and apply the rewrite rule to every assumption including itself. *)
 RULE_ASSUM_TAC (REWRITE_RULE [ASSUME `x + y = 10`])
 ```
@@ -139,7 +163,7 @@ This is a pattern frequently appearing in HOL Light proofs:
 `f x = 10 ==> f (f x) = 20`
 ```
 
-Now you can use tactics that applies to the conclusion, or pick up the assumption using `DISCH_THEN`.
+Now you can use tactics that apply to the conclusion, or pick up the assumption using `DISCH_THEN`.
 
 ### Removing a specific, unnamed assumption
 
