@@ -6,17 +6,19 @@ Online materials for HOL Light:
 
 ## Building & Running HOL Light
 
+Assuming that [OPAM](https://opam.ocaml.org/doc/Install.html) is installed in your machine.
+you can easily build HOL Light using the following instructions which are also described in [README](https://github.com/jrh13/hol-light/blob/master/README):
+
 ```
-cd build-script
-./clone-and-build-hollight.sh
-cd hol-light
+make switch
 eval $(opam env)
-./hol.sh
+make
+# Now you have 'hol.sh' .
 ```
 
-The OCaml REPL does not accept arrow keys by default. To resolve this. you can use ledit (https://opam.ocaml.org/packages/ledit/) and use ledit ocaml instead. ledit can be installed using either apt install ledit or opam install ledit, then do `export LINE_EDITOR=ledit` before calling `hol.sh`.
+### Checkpointing
 
-For checkpointing, DMTCP is recommended (README of HOL Light has more instructions).
+DMTCP is recommended (README of HOL Light has more instructions).
 Once `dmtcp_restart_script.sh` is created, you can create multiple instances of HOL Light by
 starting the script with distinct ports `-p <port number>`.
 
@@ -29,6 +31,7 @@ starting the script with distinct ports `-p <port number>`.
 
 - [Use or update assumptions in HOL Light](PlayingWithAssumptions.md).
 - [Use rewrite tactics well](RewriteTac.md)
+- [Debug errors](Debugging.md)
 - [Prove 'trivial' goals](ProvingTrivialGoals.md)
 
 ## [HOL Light vs. Coq](HOLLightvsCoq.md)
