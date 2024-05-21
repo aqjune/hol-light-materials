@@ -172,6 +172,9 @@ val it : goalstack = 1 subgoal (1 total)
 - Similarly, `RAND_CONV` ([RAND_CONV](https://hol-light.github.io/references/HTML/RAND_CONV.html)) applies
 to the right-hand side of binary operator. Actually, this applies to any operand of an application because
 `binop l r = (binop l) r`.
+- `RATOR_CONV` ([RATOR_CONV](https://hol-light.github.io/references/HTML/RATOR_CONV.html)) applies to the
+operator `f` of an application `f x`. If the expression is `f x y`, this applies to `f x` because `f x y`
+is `(f x) y`.
 - `PAT_CONV <pattern>` ([PAT_CONV](https://hol-light.github.io/references/HTML/PAT_CONV.html)) specifies
 the subexpression to rewrite using `<pattern>` which is a lambda function.
   The parameter of lambda function works as a 'placeholder' to the pattern to match.
