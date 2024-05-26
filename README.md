@@ -29,7 +29,7 @@ starting the script with distinct ports `-p <port number>`.
 
 ## How-to
 
-- [Use or update assumptions in HOL Light](PlayingWithAssumptions.md).
+- [Use or update assumptions in HOL Light](PlayingWithAssumptions.md)
 - [Use rewrite tactics well](RewriteTac.md)
 - [Debug a tactic](Debugging.md)
 - [Prove 'trivial' goals](ProvingTrivialGoals.md)
@@ -39,7 +39,7 @@ starting the script with distinct ports `-p <port number>`.
 ## Fundamentals and Internal Representation of Terms
 
 - [Fundamentals](Fundamentals.md)
-- [AST](AST.md).
+- [AST](AST.md)
 
 ## Examples and Exercises
 

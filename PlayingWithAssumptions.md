@@ -8,10 +8,13 @@ This document explains tactics that can be used in each proof style.
 
 ## 1. How to name assumptions and use them
 
-### Naming assumptions.
+### Naming existing assumptions.
 
-A simplest solution is to label all existing assumptions at once using `NAME_ASSUMS_TAC`.
+A simplest solution is to label all existing assumptions at once using `NAME_ASSUMS_TAC`
+([doc](https://hol-light.github.io/references/HTML/NAME_ASSUMS_TAC.html)).
 This will simply assign names `H0`, `H1`, ... to all unnamed assumptions.
+
+### Naming while introducing new assumptions.
 
 If the goal is `.. |- P ==> Q`, you can do `intro Hname` in Coq using `INTRO_TAC "Hname"` in HOL Light.
 
@@ -48,10 +51,6 @@ Note that a lambda function in OCaml has a syntax `fun (arg:type) -> body`.
 `DISCH_THEN(LABEL_TAC "Hname")` is therefore fully equivalent to `DISCH_THEN(fun (th:thm) -> LABEL_TAC "Hname" th)`.
 In HOL Light, we use a term 'theorem-tactic' to indicate a lambda function that takes one `thm`-typed argument and returns a tactic.
 Its OCaml type is `thm -> tactic`, but in many documents (including this doc) it is informally abbreviated as `ttac`.
-
-While introducing `P`, you can apply some transformations to the assumption on-the-fly.
-For example, `DISCH_THEN(LABEL_TAC "Hname" o REWRITE_RULE[MOD_EQ_0])` introduces `P` and rewrites the assumption using a set of rewrite rules (`MOD_EQ_0` in this case).
-`o` is an operator that composes two functions.
 
 ### Picking and using named assumptions
 

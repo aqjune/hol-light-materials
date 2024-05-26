@@ -22,7 +22,7 @@
 - A function definition with its type explicitly specified: `` new_definition `(f:num->num) x = x + 1` ``
 
 
-## Definitions
+## OCaml Definitions
 
 Types, terms and theorems:
 

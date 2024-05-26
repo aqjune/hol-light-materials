@@ -13,7 +13,7 @@ Also, enabling this option will make the speed of tactic significantly slow.
 `#trace <function name>;;` tells the values of arguments passed to the function
 and its return values.
 This may give some hints about how the tactic works.
-You can disable the trace using `#untrace <function name>;;`
+You can disable the trace using `#untrace <function name>;;` or simply `#untrace_all`.
 [This document](https://ocaml.org/docs/debugging#tracing-functions-calls-in-the-toplevel)
 has more details.
 
@@ -45,12 +45,17 @@ Or, `... ORELSE FAIL_TAC "message"` can be used instead.
 This will be explained in the later section of this document.
 
 
-## Printing terms, types and theorems.
+## Printing terms, types and theorems
 
 There are `string_of_*` functions that convert a HOL Light object into OCaml string:
 `string_of_term`, `string_of_type` and `string_of_thm`.
 You can use `Printf.printf "..(format).." ..(args)..` to print them.
 There are also shorter versions `print_term`, `print_type` and `print_thm`.
+You can also use `pp_print_*` and `Format.asprintf`:
+
+```ocaml
+Format.asprintf "test: %a %a" pp_print_qterm `1` pp_print_qterm `1+2`;;
+```
 
 <b>Printing types of subterms.</b>
 By default, HOL Light will not print the types of subterms unless they are invented type
@@ -77,7 +82,7 @@ val it : term =
 val it : term = `1 + x`
 ```
 
-## Printing the goal state.
+## Printing the goal state
 
 There is `PRINT_GOAL_TAC` ([doc](https://hol-light.github.io/references/HTML/PRINT_GOAL_TAC.html))
 which is a tactic that simply prints the goal state.
@@ -111,6 +116,7 @@ other than using `e(PRINT_GOAL_TAC)` you can also use:
 
 ## Asserting that the current goal state is in a good shape.
 
+### Predicates for checking a term
 You can use `term_match` ([doc](https://hol-light.github.io/references/HTML/term_match.html)) to
 assert that the conclusion is in a good shape.
 
@@ -133,12 +139,55 @@ Warning: inventing type variables
 Exception: Failure "term_pmatch".
 ```
 
-<b>Checking the number of subgoals.</b>
+<b>Getting free variables.</b>
+To check a variable appears as a free variable inside an expression,
+you can use `vfree_in` ([doc](https://hol-light.github.io/references/HTML/vfree_in.html)).
+`frees` return a list of free variables ([doc](https://hol-light.github.io/references/HTML/frees.html)).
+
+```
+# vfree_in `x:num` `x + y + 1`;;
+val it : bool = true
+# frees `x = 1 /\ y = 2 /\ !z. z >= 0`;;
+val it : term list = [`x`; `y`]
+```
+
+<b>Decomposing a term.</b>
+
+- Numeral: You can use `is_numeral` to check whether the term is a constant numeral
+([doc](https://hol-light.github.io/references/HTML/is_numeral.html)),
+and use `dest_numeral` ([doc](https://hol-light.github.io/references/HTML/dest_numeral.html))
+to get the actual constant.
+The returned constant is a general-precision number datatype `num`.
+If you know that the constant should fit in OCaml `int`,
+use `dest_small_number`([doc](https://hol-light.github.io/references/HTML/dest_small_numeral.html`)).
+
+- Function application: `strip_comb` will break `f x y z` into ``(`f`,[`x`;`y`;`z`])``
+([doc](https://hol-light.github.io/references/HTML/strip_comb.html)).
+
+- Others: there are `is_forall`, `strip_forall`, `is_conj`, `dest_conj`, `conjuncts`, etc.
+
+### Dealing with subgoals
+
 To check that there only is one subgoal,
 `tactic THENL [ ALL_TAC ] THEN next_tactic` can be used.
 To check that there exactly are `n` subgoals,
 `tactic THENL (map (fun _ -> ALL_TAC) (1--10)) THEN next_tactic`
 will work.
+
+### Which Exception type should I use?
+
+The `Failure` exception type is commonly used in HOL Light to stop execution if
+an unexpected situation happened.
+This can be conveniently raised usihg the `failwith "msg"` function of OCaml, which is
+equivalent to `raise (Failure "msg")`.
+However, there are several predefined types of exceptions in OCaml, and
+`Failure` is only one of them.
+For example, `assert` will raise `Assert_failure` which is slightly different from
+`Failure`.
+My suggestion is to stick to `Failure` in HOL Light unless it is very necessary to
+use the other types.
+[This link](https://ocaml.org/docs/error-handling) has more info for generic
+situations.
 
 ## Other useful tricks
 
@@ -150,6 +199,11 @@ one easy start is to initiate `asl` and `g` using the following command:
 let asl,g = top_realgoal();;
 ```
 and follow the statements step by step.
+Note that this overwrites the global definition of `g` which is used to
+set the goal (e.g., "g `1 + 1 = 2`;;"). The original definition can be recovered by
+```ocaml
+let g t = set_goal([],t);;
+```
 
 If it contains a complicated expression, a subexpression can be explored
 by typing it at toplevel and using the returned `it` variable to explore

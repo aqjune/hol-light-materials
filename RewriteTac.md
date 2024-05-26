@@ -319,6 +319,20 @@ As described before, a benefit of this solution is that it automatically generat
 specialized preconditions.
 For example, `MOD_LT`'s precondition `m < n` in the second example was automatically specialized
 to `1 + 2 < 5` according to its matched expression.
+Also, if there are more than one match, it generates multiple specialized preconditions:
+
+```
+# g `(x + y) MOD 10 = 0 /\ (x + y*2) MOD 20 = 0`;;
+Warning: Free variables in goal: x, y
+val it : goalstack = 1 subgoal (1 total)
+
+`(x + y) MOD 10 = 0 /\ (x + y * 2) MOD 20 = 0`
+
+# e(IMP_REWRITE_TAC[MOD_LT]);;
+val it : goalstack = 1 subgoal (1 total)
+
+`(x + y = 0 /\ 0 < 10) /\ x + y * 2 = 0 /\ 0 < 20`
+```
 
 ### B. Proving the precondition first
 
