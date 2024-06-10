@@ -139,6 +139,13 @@ Warning: inventing type variables
 Exception: Failure "term_pmatch".
 ```
 
+To check that two terms are alpha-equivalent, `aconv` ([doc](https://hol-light.github.io/references/HTML/aconv.html))
+can be used.
+```
+# aconv `?x. x <=> T` `?y. y <=> T`;;
+val it : bool = true
+```
+
 <b>Getting free variables.</b>
 To check a variable appears as a free variable inside an expression,
 you can use `vfree_in` ([doc](https://hol-light.github.io/references/HTML/vfree_in.html)).
@@ -166,6 +173,11 @@ use `dest_small_number`([doc](https://hol-light.github.io/references/HTML/dest_s
 
 - Others: there are `is_forall`, `strip_forall`, `is_conj`, `dest_conj`, `conjuncts`, etc.
 
+### Checking that tactic actually did something
+
+`CHANGED_TAC t` is a tactic that fails if tactic `t` did not change the goal state.
+
+
 ### Dealing with subgoals
 
 To check that there only is one subgoal,
@@ -186,14 +198,16 @@ For example, `assert` will raise `Assert_failure` which is slightly different fr
 `Failure`.
 My suggestion is to stick to `Failure` in HOL Light unless it is very necessary to
 use the other types.
+For example, `t1 ORELSE t2` will execute `t2` if `t1` raised Failure, or immediately
+stop otherwise.
 [This link](https://ocaml.org/docs/error-handling) has more info for generic
 situations.
 
 ## Other useful tricks
 
 ### Tips for understanding a complex tactic.
-Understanding how a complex tactic works is a hard thing.
-If a tactic typically starts with `fun (asl,g) -> ...`,
+
+If a tactic starts with `fun (asl,g) -> ...`,
 one easy start is to initiate `asl` and `g` using the following command:
 ```ocaml
 let asl,g = top_realgoal();;
@@ -208,6 +222,7 @@ let g t = set_goal([],t);;
 If it contains a complicated expression, a subexpression can be explored
 by typing it at toplevel and using the returned `it` variable to explore
 an expression that subsumes it.
+
 
 ### Flags for immediately stopping at failures or warnings.
 

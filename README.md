@@ -27,6 +27,11 @@ starting the script with distinct ports `-p <port number>`.
 - VSCode: [vscode-hol-light](https://github.com/monadius/vscode-hol-light) is available at VSCode Marketplace.
 - Emacs: [hol-light-emacs](https://github.com/gilith/hol-light-emacs)
 
+## Fundamentals and Internal Representation of Terms
+
+- [Fundamentals](Fundamentals.md)
+- [AST](AST.md)
+
 ## How-to
 
 - [Use or update assumptions in HOL Light](PlayingWithAssumptions.md)
@@ -35,11 +40,6 @@ starting the script with distinct ports `-p <port number>`.
 - [Prove 'trivial' goals](ProvingTrivialGoals.md)
 
 ## [HOL Light vs. Coq](HOLLightvsCoq.md)
-
-## Fundamentals and Internal Representation of Terms
-
-- [Fundamentals](Fundamentals.md)
-- [AST](AST.md)
 
 ## Examples and Exercises
 
