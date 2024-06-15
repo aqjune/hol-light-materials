@@ -54,7 +54,7 @@ let memory_SPEC = prove(
 
   (* Convert 'nonoverlapping' into 'nonoverlapping_modulo' and rewrite 'LENGTH memory_mc'
      with the concrete number. *)
-  REWRITE_TAC[NONOVERLAPPING_CLAUSES;EXEC] THEN
+  REWRITE_TAC[NONOVERLAPPING_CLAUSES;fst EXEC] THEN
   (* Strips the assumption and outermost universal quantifier from the conclusion of a goal *)
   REPEAT STRIP_TAC THEN
 
