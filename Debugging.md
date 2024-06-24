@@ -2,7 +2,7 @@
 
 This document introduces methods to debug a tactic in HOL Light.
 
-## Debugging tools of OCaml
+## 1. Debugging tools of OCaml
 
 In toplevel, you can use `Printexc.record_backtrace true;;` to print a call stack
 when an exception happened.
@@ -45,7 +45,7 @@ Or, `... ORELSE FAIL_TAC "message"` can be used instead.
 This will be explained in the later section of this document.
 
 
-## Printing terms, types and theorems
+## 2. Printing terms, types and theorems
 
 There are `string_of_*` functions that convert a HOL Light object into OCaml string:
 `string_of_term`, `string_of_type` and `string_of_thm`.
@@ -82,7 +82,7 @@ val it : term =
 val it : term = `1 + x`
 ```
 
-## Printing the goal state
+## 3. Printing the goal state
 
 There is `PRINT_GOAL_TAC` ([doc](https://hol-light.github.io/references/HTML/PRINT_GOAL_TAC.html))
 which is a tactic that simply prints the goal state.
@@ -114,7 +114,7 @@ other than using `e(PRINT_GOAL_TAC)` you can also use:
 # print_goal (top_realgoal());;
 ```
 
-## Asserting that the current goal state is in a good shape.
+## 4. Asserting that the current goal state is in a good shape.
 
 ### Predicates for checking a term
 You can use `term_match` ([doc](https://hol-light.github.io/references/HTML/term_match.html)) to
@@ -203,7 +203,7 @@ stop otherwise.
 [This link](https://ocaml.org/docs/error-handling) has more info for generic
 situations.
 
-## Other useful tricks
+## 5. Other useful tricks
 
 ### Tips for understanding a complex tactic.
 
@@ -236,3 +236,33 @@ Invented types can be problematic in some tactics like `SUBGOAL_THEN` which will
 a bogus, unprovable goal.
 To immediately stop when types are invented, `type_invention_error := true;;`
 will work ([doc](https://hol-light.github.io/references/HTML/type_invention_error.html))
+
+
+### Understanding why a tactic is slow.
+
+In general, a tactic can be slow for various reasons.
+
+- Nested `DEPTH_CONV` and `REWRITE_CONV`: `REWRITE_CONV` recursively visits the subterms.
+If it is used inside `DEPTH_CONV`, this can cause a significant slowdown because the
+subterms are recursively visited twice.
+
+- Use of `prove()`: If the tactic proves a custom lemma using `prove()` on the fly, the `prove()`
+invocation can be a bottleneck because it is slower. One possible solution is to cache
+the lemmas that are proven by `prove()` and reuse it.
+
+- Validity check of `e()`: Sometimes the speed of `e()` can significantly slow down
+due to its validity check. This can be temporarily avoided by redefining `e` as:
+
+```ocaml
+(*let e tac = refine(by(VALID tac));;*)
+let e tac = refine(by(tac));;
+```
+
+TODO: use of `CLARIFY_TAC` in s2n-bignum
+
+
+### Omitting proof checks of needed `.ml` files for speed
+
+It is often not necessary to check the proofs of the proof files that is being loaded.
+[needs_skip_proofs](needs_skip_proofs.ml) is a tactic that can replace `needs` to omit the
+`prove()` calls inside the file.
