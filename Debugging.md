@@ -1,8 +1,8 @@
-# Debugging a tactic in HOL Light
+# Debugging a tactic and proof in HOL Light
 
-This document introduces methods to debug a tactic in HOL Light.
+This document introduces methods to debug a tactic and proof in HOL Light.
 
-## 1. Debugging tools of OCaml
+## 1. Useful debugging tools of OCaml
 
 In toplevel, you can use `Printexc.record_backtrace true;;` to print a call stack
 when an exception happened.
@@ -23,9 +23,74 @@ C was one of your languages.
 Sometimes `Printf.printf` may not immediately print the string, and this can be
 resolved by adding `%!` to the format string
 ([example](https://discuss.ocaml.org/t/when-does-printf-printf-flush/12057)).
+This document also describes how to print terms, types and theorems.
 
-<b>Timing of printing.</b>
-Let's assume that you want to use `Printf.printf` to figure out which tactic is failing.
+
+## 2. Debugging a proof
+
+After Q.E.D, a proof is typically rewritten to the `prove(the_goal, ... (tactics) ...)`
+form because it is much more compact than the `g`-`e` form.
+However, debugging a failing proof in `prove` is not easy because it is not interactive.
+This section describes a few tips to do this.
+
+
+### Converting a proof into the `g`-`e` form
+
+As the first step, you can convert the proof into `g`-`e` form.
+This will implicitly happen even if you are using the VSCode HOL Light plugin
+to go through each tactic step by step because it will wrap it with `e(..)` on REPL.
+Therefore, the proof does not have to be manually converted if the VSCode plugin is used.
+
+However, `t1 THEN t2` is not equivalent to `e(t1);; e(t2);;` and this may make a supposed-to-be-correct
+proof going wrong.
+There are two reasons why they are not equivalent.
+
+1. If `t1` generates multiple subgoals, `t2` is applied to every subgoal whereas `e(t2);;`
+   will only be applied to the first subgoal.
+2. `e(..)` does validity check of the tactic which can fail (this case is rare).
+
+To check that a proof in `prove(..)` does not have the first issue,
+run `unset_then_multiple_subgoals;;` first and rerun the `prove(..)` again.
+If it passes, translating the proof into `g`-`e` form will not suffer from the first problem.
+
+Personally, I recommend turning on `unset_then_multiple_subgoals` and writing your proof
+from the beginning because this will reduce the burden of later maintenance.
+For any tactic that can generate multiple subgoals, one can use `.. THENL (replicate t2 n)` where
+`n` is the number of subgoals.
+
+### Printing the intermediate goal states
+
+There is `PRINT_GOAL_TAC` ([doc](https://hol-light.github.io/references/HTML/PRINT_GOAL_TAC.html))
+which is a tactic that simply prints the goal state.
+You can combine this with `ORELSE` so that the goal state is printed and a failure is returned
+if the tactic fails:
+
+```
+(... (a tactic that can fail) ...) ORELSE (PRINT_GOAL_TAC THEN FAIL_TAC "my message")
+```
+
+If you want to print more or less information, you can write your own tactic that looks like this:
+
+```ocaml
+let MY_PRINT_CONCLUSION_TAC:tactic =
+  fun (asl,g) ->
+    let _ = Printf.printf "The conclusion was: `%s`\n" (string_of_term g) in
+    ALL_TAC (asl,g);;
+```
+
+If the goal is too large to print in a reasonable terminal buffer size,
+you can set `print_goal_hyp_max_boxes := Some <small number>;;`
+([doc](https://hol-light.github.io/references/HTML/print_goal_hyp_max_boxes.html)).
+This will make the goal printer omit subexpressions with dots if they use more
+'boxes' than the parameter.
+
+If you already converted the proof to `g()` and `e()` and are deubgigng it,
+other than using `e(PRINT_GOAL_TAC)` you can also use:
+```
+# print_goal (top_realgoal());;
+```
+
+<b>Timing of printing.</b> Let's assume that you want to use `Printf.printf` to figure out which tactic is failing.
 It will be tempting to write
 ```ocaml
 let my_proof = prove(`...`,
@@ -39,13 +104,8 @@ but this won't work because it will always print the whole messages successfully
 This is because function arguments are always eagerly evaluated in OCaml.
 So, messages will have been already printed before the `prove` function is invoked.
 
-In this case, `Printf.printf` must be wrapped inside a function which will run when `prove`
-is eventually started.
-Or, `... ORELSE FAIL_TAC "message"` can be used instead.
-This will be explained in the later section of this document.
 
-
-## 2. Printing terms, types and theorems
+## 3. Printing terms, types and theorems
 
 There are `string_of_*` functions that convert a HOL Light object into OCaml string:
 `string_of_term`, `string_of_type` and `string_of_thm`.
@@ -82,115 +142,11 @@ val it : term =
 val it : term = `1 + x`
 ```
 
-## 3. Printing the goal state
-
-There is `PRINT_GOAL_TAC` ([doc](https://hol-light.github.io/references/HTML/PRINT_GOAL_TAC.html))
-which is a tactic that simply prints the goal state.
-You can combine this with `ORELSE` so that the goal state is printed and a failure is returned
-if the tactic fails:
-
-```
-(... (a tactic that can fail) ...) ORELSE (PRINT_GOAL_TAC THEN FAIL_TAC "my message")
-```
-
-If you want to print more messages, you can write your own tactic that looks like this:
-
-```ocaml
-let MY_PRINT_CONCLUSION_TAC:tactic =
-  fun (asl,g) ->
-    let _ = Printf.printf "The conclusion was: `%s`\n" (string_of_term g) in
-    ALL_TAC (asl,g);;
-```
-
-If the goal is too large to print in a reasonable terminal buffer size,
-you can set `print_goal_hyp_max_boxes := Some <small number>;;`
-([doc](https://hol-light.github.io/references/HTML/print_goal_hyp_max_boxes.html)).
-This will make the goal printer omit subexpressions with dots if they use more
-'boxes' than the parameter.
-
-If you are editing your proof using `g()` and `e()` (the subgoal package),
-other than using `e(PRINT_GOAL_TAC)` you can also use:
-```
-# print_goal (top_realgoal());;
-```
-
-## 4. Asserting that the current goal state is in a good shape.
-
-### Predicates for checking a term
-You can use `term_match` ([doc](https://hol-light.github.io/references/HTML/term_match.html)) to
-assert that the conclusion is in a good shape.
-
-```ocaml
-let MY_CHECKER_TAC:tactic =
-  fun (asl,g) ->
-    (* Let's assert that the conclusion has the form 'x = y'. *)
-    let _ = term_match [] `x = y` g in
-    ALL_TAC (asl,g);;
-```
-
-```
-# g `1 < 2`;;
-val it : goalstack = 1 subgoal (1 total)
-
-`1 < 2`
-
-# e(MY_CHECKER_TAC);; (* This should fail *)
-Warning: inventing type variables
-Exception: Failure "term_pmatch".
-```
-
-To check that two terms are alpha-equivalent, `aconv` ([doc](https://hol-light.github.io/references/HTML/aconv.html))
-can be used.
-```
-# aconv `?x. x <=> T` `?y. y <=> T`;;
-val it : bool = true
-```
-
-<b>Getting free variables.</b>
-To check a variable appears as a free variable inside an expression,
-you can use `vfree_in` ([doc](https://hol-light.github.io/references/HTML/vfree_in.html)).
-`frees` return a list of free variables ([doc](https://hol-light.github.io/references/HTML/frees.html)).
-
-```
-# vfree_in `x:num` `x + y + 1`;;
-val it : bool = true
-# frees `x = 1 /\ y = 2 /\ !z. z >= 0`;;
-val it : term list = [`x`; `y`]
-```
-
-<b>Decomposing a term.</b>
-
-- Numeral: You can use `is_numeral` to check whether the term is a constant numeral
-([doc](https://hol-light.github.io/references/HTML/is_numeral.html)),
-and use `dest_numeral` ([doc](https://hol-light.github.io/references/HTML/dest_numeral.html))
-to get the actual constant.
-The returned constant is a general-precision number datatype `num`.
-If you know that the constant should fit in OCaml `int`,
-use `dest_small_number`([doc](https://hol-light.github.io/references/HTML/dest_small_numeral.html`)).
-
-- Function application: `strip_comb` will break `f x y z` into ``(`f`,[`x`;`y`;`z`])``
-([doc](https://hol-light.github.io/references/HTML/strip_comb.html)).
-
-- Others: there are `is_forall`, `strip_forall`, `is_conj`, `dest_conj`, `conjuncts`, etc.
-
-### Checking that tactic actually did something
-
-`CHANGED_TAC t` is a tactic that fails if tactic `t` did not change the goal state.
-
-
-### Dealing with subgoals
-
-To check that there only is one subgoal,
-`tactic THENL [ ALL_TAC ] THEN next_tactic` can be used.
-To check that there exactly are `n` subgoals,
-`tactic THENL (map (fun _ -> ALL_TAC) (1--10)) THEN next_tactic`
-will work.
-
-### Which Exception type should I use?
+## 4. Exceptions in HOL Light
 
 The `Failure` exception type is commonly used in HOL Light to stop execution if
 an unexpected situation happened.
-This can be conveniently raised usihg the `failwith "msg"` function of OCaml, which is
+This can be conveniently raised using the `failwith "msg"` function of OCaml, which is
 equivalent to `raise (Failure "msg")`.
 However, there are several predefined types of exceptions in OCaml, and
 `Failure` is only one of them.
@@ -214,7 +170,7 @@ let asl,g = top_realgoal();;
 ```
 and follow the statements step by step.
 Note that this overwrites the global definition of `g` which is used to
-set the goal (e.g., "g `1 + 1 = 2`;;"). The original definition can be recovered by
+set the goal (e.g., ``"g `1 + 1 = 2`;;"``). The original definition can be recovered by
 ```ocaml
 let g t = set_goal([],t);;
 ```
@@ -230,6 +186,8 @@ an expression that subsumes it.
 HOL Light does not stop by default when a failure happend during loading nested files.
 To control this behavior, setting `use_file_raise_failure := true;;` will work
 ([doc](https://hol-light.github.io/references/HTML/use_file_raise_failure.html)).
+With this flag on, loading a file will immediately stop whenever there is a failure
+even in its nested load.
 
 <b>Avoiding invented types.</b>
 Invented types can be problematic in some tactics like `SUBGOAL_THEN` which will
@@ -247,7 +205,7 @@ If it is used inside `DEPTH_CONV`, this can cause a significant slowdown because
 subterms are recursively visited twice.
 
 - Use of `prove()`: If the tactic proves a custom lemma using `prove()` on the fly, the `prove()`
-invocation can be a bottleneck because it is slower. One possible solution is to cache
+invocation can be a bottleneck because it is slow. One possible solution is to cache
 the lemmas that are proven by `prove()` and reuse it.
 
 - Validity check of `e()`: Sometimes the speed of `e()` can significantly slow down

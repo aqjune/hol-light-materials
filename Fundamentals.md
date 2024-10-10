@@ -5,13 +5,39 @@ as well.
 
 ## HOL Light from a perspective of OCaml programmer
 
-### The `thm` type
-
 The goal of using HOL Light is to logically prove that a proposition is true.
 A proposition is typically represented as a `term` data structure of OCaml, and
 proving the proposition is equivalent to creating an instance of a `thm` OCaml type
 describing the proposition.
-The `thm` OCaml type is private, meaning that a programmer cannot freely create
+
+### The `term` type
+
+`term` is an OCaml data type that is used to represent any mathematical
+formula such as `1 + 2` and `forall x. x - x = 0`.
+A new `term` is created using the `parse_term` OCaml function by provinding
+a string formula to it.
+For example, `parse_term "x + y"` will construct the HOL Light term that will actually
+look like the following:
+
+```ocaml
+Comb (Comb (Const ("+", `:num->num->num`), Var ("x", `:num`)), Var ("y", `:num`))
+```
+
+To avoid writing `parse_term` every time, back-ticks can be used.
+These back-ticks are read by a Camlp5 preprocessor of HOL Light and automatically
+converted to the `parse_term` form.
+For example, `` `x + y` `` is translated to `parse_term "x + y"` after preprocessing.
+Also, a pretty-printer for the `term` objects is set up on OCaml REPL for readability.
+Therefore, running `parse_term "x + y"` on REPL will print:
+
+```ocaml
+val it : term = `x + y`
+```
+
+### The `thm` type
+
+The `thm` OCaml type represents proven facts.
+The type is private, meaning that a programmer cannot freely create
 an arbitrary instance of `thm`.
 This prevents users from proving a false theorem (*consistency of the system of logic*).
 To be concrete, let's dive into the definition of type `thm` in
@@ -79,6 +105,7 @@ apply `t2` to all subgoals of `t1`.
 Also, it does not have to go through validity check.
 However, it is fundamentally not interactive because it is a single OCaml expression rather than
 multiple `;;`-separated OCaml statements.
+
 Therefore, a natural flow would be to first write the proof in `g`-`e` style, then after it is
 complete convert it into the `THEN` form and invoke `prove` with it.
 However, this conversion is laborsome and unfortunately error-prone if done by hand.
@@ -94,18 +121,19 @@ form and running it. hol-light plugin of VSCode supports this.
     - `TAUT` allows excluded middle. Double negation elimination (`~~P -> P`) is allowed
 - Allows functional extensionality.
 - Unbound variables are considered as universally quantified variables
-    - ex) Goal `x + 0 = x` is valid, and it means `!x. x + 0 = x`
-- `!P` (which is `forall x, P x` in Coq) is equivalent to `(P = \x. true)`.
-    - Therefore, `!` is `\P. (P = \x. true)`.
+    - ex) Goal `x + 0 = x` is valid, and it means `forall x. x + 0 = x` (or more briefly, `!x. x + 0 = x`)
+- `!x. P x` (which is `forall x, P x` in Coq and verbosely `forall x. P x` in HOL Light as well) is
+    equivalent to `(P = \x. true)`.
 - Unlike Coq, you cannot define a type of an empty element (`False` in Coq)
     - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.hlp)
-    - This allows you to prove `?x y. x = y`! (`?x` is exists x.)
+    - This allows you to prove `exists x y. x = y`!
 - Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
 - `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
 
 ## Basic Syntax
 
 - `` `..` `` is a HOL Light term which is in fact `parse_term("..")`.
+- `` `:..` `` is a HOL Light type which is in fact `parse_type ("..")`.
 - `// ..` is an inline comment. This can be changed by manipulating some configuration.
 
 ### Typing.
@@ -175,22 +203,24 @@ type conv = term->thm;;
 
 ## Tactic of HOL Light
 
-Tactic is a function from `goal` to `goalstate`.
+Using tactic of HOL Light, a user can break a large goal into smaller, more tractable goals.
+When the 'subgoals' become sufficiently small, they can be proven by simply applying existing
+lemma or even by other tactics that can directly discharge the subgoal.
+This 'backward-style' proof is different from a forward-style which is starting
+from the given assumptions and constructing intermediate theorems using
+inference rules.
+
+In OCaml, a tactic (`tactic` type) is a function from `goal` to `goalstate`.
 `goal` is a pair of named assumptions and conclusion term.
-`goalstate` is a complex data structure that has a list of subgoals, and
-one `goalstate` is created after a `e()` function call.
-Note that a tactic is only applied to the first goal of a goalstate.
+`goalstate` is a complex data structure that has a list of subgoals.
 
 
-### How does it eventually reconstruct a `thm` object?
+### How does it eventually reconstruct a `thm` instance?
 
-Tactic allows writing a proof in a backward style by breaking a large goal into
-smaller, more tractable goal.
-However, since it is the `thm` type that represents a proven fact in HOL Light,
+Since it is the `thm` type that represents a proven fact in HOL Light,
 tactic must be able to reconstruct the `thm` instance in the end.
-
-To understand how tactic reconstructs a `thm` instance, we need to look at
-the `justification` type in `tactics.ml`.
+To understand how tactic reconstructs a theorem, we need to look at
+the definition of `justification` type in `tactics.ml`.
 
 ```ocaml
 (* tactics.ml *)
@@ -205,19 +235,103 @@ the `justification` type in `tactics.ml`.
 type justification = instantiation -> thm list -> thm;;
 ```
 
-It takes
+The type is a function taking two arguments and returning `thm`.
 
-  1. `instantiation` which is a mapping from variables to their expressions.
-     This is also a return type of a `term_match` function.
-  2. `thm list` which is a list of proven theorems. Each item of this list
+  1. `instantiation` is a mapping from metavariables to their expressions.
+     This is also a return type of a `term_match` function, so looking at
+     its documentation will be helpful in understanding it further.
+  2. `thm list` is a list of proven theorems. Each item of this list
      will be the theorem created after each subgoal is finally proven.
+     For example, if the tactic was applying an inference rule,
+     the `thm list` must be the list of proven assumptions for the rule.
 
 Each goalstate carries its growing justification function object, as shown
 from the previous OCaml definition of `goalstate`.
-One `e()` function call will create a new `goalstate` with possibly 'smaller'
-goals and grown justification.
+Applying a tactic will create a new `goalstate` with possibly 'smaller'
+goals and its justification.
 Once the initial goal is fully proven, the goalstate will contain an empty
 subgoal and fully grown justification.
 The full theorem then can be reconstructed by invoking the justification
 function with empty instantiation (`null_inst`) and empty theorems (`[]`).
 The `top_thm` function as well as a part of `prove` function does this.
+
+One good example showing how justification works is `CONJ_TAC` which splits the goal `A ?- P /\ Q`
+into two subgoals `A ?- P` and `A ?- Q`.
+Its inference rule version, `CONJ`, will take the proven facts `A |- P` and
+`B |- Q` and return `A u B |- P /\ Q`.
+The definition of `CONJ_TAC` clearly shows how `CONJ` is used to build its
+justification:
+
+```ocaml
+let (CONJ_TAC: tactic) =
+  fun (asl,w) -> (* asl: assumptions list, w: conclusion *)
+    try let l,r = dest_conj w in
+        null_meta,(* no metavariable instantiation *)
+        [asl,l; asl,r], (* has two subgoals *)
+        fun _ [th1;th2] -> CONJ th1 th2 (* this is the justification *)
+    with Failure _ -> failwith "CONJ_TAC";;
+```
+
+After a user writes a full proof using tactics,
+HOL Light checks whether the proof is correct by composing the justification functions
+of the used tactics and checking whether the justification function returns a wanted `thm` instance.
+If the returned `thm` instance is syntactically correct, it indeed represents a correct proof
+because any created `thm` instance is logically correct by construction (unless axiomatized). :)
+
+
+### `e(tac)` modularly checks the validity of `tac`
+
+We can check whether a full proof consisting of multiple tactics is correct or not by
+inspecting the output of composed justification function.
+Another important question would be how to check whether individual tactic is correct,
+or at least 'makes sense'.
+For example, let's assume that you are writing your own `CONJ_TAC` implementation.
+How can one check that the tactic provides the right next subgoals and justification function?
+
+This is called the validity of a tactic.
+`e(tac)` checks the validity of `tac` using `VALID` ([doc](https://hol-light.github.io/references/HTML/VALID.html))
+internally.
+It is easy to write an example that makes the validity check fail.
+For example, consider a tactic that adds `x = 0` without any context:
+
+```ocaml
+let BOGUS_TAC:tactic =
+  fun (assums,goal) -> ALL_TAC (("I_am_bogus",ASSUME `x = 0`)::assums,goal);;
+```
+
+Running this tactic should fail in general because it is adding `x = 0` as
+an assumption without any condition.
+Indeed, using this tactic will raise `Failure "VALID: Invalid tactic"` exception.
+
+```
+# g `x + 1 = 1`;;
+Warning: Free variables in goal: x
+val it : goalstack = 1 subgoal (1 total)
+
+`x + 1 = 1`
+
+# e(BOGUS_TAC);;
+Exception: Failure "VALID: Invalid tactic".
+```
+
+The mechanism of validity check is simple. We will use the previous `CONJ_TAC` as an example.
+Let's assume that, from a goal `(assums,concl)`, applying `CONJ_TAC` returned
+(1) two subgoals `(assums1,concl1)` and `(assums2,concl2)`
+(2) a justification `f` which will take the two sub-theorems for inference rule `CONJ`
+    (we will omit the metavariable instantiation for simplicty).
+
+Also, let's assume that we could somehow construct a theorem `thm1` that exactly
+corresponds to `(assums1,concl1)` and `thm2` that is exactly `(assums2,concl2)`.
+If the output theorem of `f (thm1,thm2)` is equivalent to `(assums,concl)`, meaning that
+its assumptions are `assums` and its conclusion is `concl`, `f` successfully justified that
+the tactic worked well fine.
+
+One important question is: can we construct a theorem `thm1` for
+`(assums1,concl1)` and `thm2` for `(assums2,concl2)` without axiomatizing these?
+It is `mk_fthm` that does a trick.
+Instead of axiomatization, `mk_fthm(assums,concl)` returns a new theorem
+that is `assums,_FALSITY_ |- concl` where `_FALSITY_ = false`.
+This is correct because false implies anything.
+Then, the theorems generated by this function are fed to `f` and the output theorem is checked.
+This is under an assumption that the justification function is oblivious of `_FALSITY_`
+and does not do something smart using it.

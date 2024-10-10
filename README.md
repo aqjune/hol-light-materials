@@ -36,7 +36,8 @@ starting the script with distinct ports `-p <port number>`.
 
 - [Use or update assumptions in HOL Light](PlayingWithAssumptions.md)
 - [Use rewrite tactics well](RewriteTac.md)
-- [Debug a tactic](Debugging.md)
+- [Write your own tactic](WriteYourTac.md)
+- [Debug a proof and tactic](Debugging.md)
 - [Prove 'trivial' goals](ProvingTrivialGoals.md)
 
 ## [HOL Light vs. Coq](HOLLightvsCoq.md)
