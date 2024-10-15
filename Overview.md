@@ -160,7 +160,7 @@ form and running it. hol-light plugin of VSCode supports this.
 ### Types
 
 - A symbolic type `A`: `` `:A` ``
-- An expression `e` which has type `A`: `` `x:A` ``
+- An expression `e` which has type `A`: `` `e:A` ``
 - A natural number type: `` `:num` ``
 - A pair of `:num` type: `` `:num#num` ``
 - Optional `num`: `` `:num option` ``

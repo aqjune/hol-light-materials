@@ -10,7 +10,7 @@ A tactic is an OCaml instance of type `tactic`, and `tactic` is a function type 
 The former `(string * thm) list` represents the named assumptions, and latter `term` represents the conclusion.
 `goalstate` type has a slightly more complicated definition, but unless you are writing a low-level
 tactic you can treat it as an opaque type in most cases.
-[Fundamentals.md](Fundamentals.md) explains the mechanism of tactic in detail.
+[TacticDetails.md](TacticDetails.md) explains the mechanism of tactic in detail.
 
 We will start with a very simple example, a tactic that does nothing.
 There already is `ALL_TAC` that does nothing, and the first thing we will do is to simply reuse it.

@@ -2,7 +2,7 @@
 
 ## Building & Running HOL Light
 
-Assuming that [OPAM](https://opam.ocaml.org/doc/Install.html) is installed in your machine.
+Assuming that [OPAM](https://opam.ocaml.org/doc/Install.html) is installed in your machine,
 you can easily build HOL Light using the following instructions which are also described in [README](https://github.com/jrh13/hol-light/blob/master/README):
 
 ```
