@@ -22,7 +22,8 @@ val it : (string * thm) list =
 ```
 
 You can also give `name "..."` as an argument to `search` to choose theorems that
-have the string in their names. The [help](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/search.html)
+have the string in their names. There are also `omit` and `exactly`. 
+The [help](https://www.cl.cam.ac.uk/~jrh13/hol-light/HTML/search.html)
 document has more info.
 
 ### B. Building the rewrite rule on-the-fly
