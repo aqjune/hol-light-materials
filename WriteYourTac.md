@@ -131,6 +131,11 @@ val it : bool = true
 val it : term list = [`x`; `y`]
 ```
 
+### Reading a goal state.
+
+You can use `find_terms`([doc](https://hol-light.github.io/references/HTML/find_terms.html))
+to get subterms from a goal and assumptions satisfying some pattern.
+
 <b>Decomposing a term.</b>
 
 - Numeral: You can use `is_numeral` to check whether the term is a constant numeral

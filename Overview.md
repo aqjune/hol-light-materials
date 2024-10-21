@@ -56,6 +56,8 @@ end;;
 ```
 
 As shown above, `thm`'s constructor `Sequent` is not visible to the users outside `module Hol`.
+The constructor takes a pair of `term list` and `term`, where `term list` is a list of
+assumptions and `term` is a conclusion.
 
 The only way to create a valid `thm` instance is through the functions inside the `Hol` module
 which have access to the `Sequent` constructor.
@@ -63,7 +65,9 @@ Among those, 10 are primitive inference rules that constitute the logical founda
 ([link](https://github.com/jrh13/hol-light/blob/ae6f82198f85860f2fb648882bdc90f307e5f821/fusion.ml#L72-L81)).
 A user can prove the interested theorem using these axioms in theory, but in practice this is
 tough because a typical proof tree can grow very large.
-There are two more functions: `new_axiom` and `new_basic_definition`.
+
+Other than using the existing axioms, there are two more functions to make a `thm` instance:
+`new_axiom` and `new_basic_definition`.
 `new_axiom` creates a new `thm` instance and it can indeed be used to create a false theorem.
 To check whether any axiom has been introduced in the past, the return value of `axioms()` can be
 checked.
@@ -77,38 +81,98 @@ Using it does not introduce inconsistency in the logical system.
 Given a goal which is a `term` type, writing its proof is simply writing an OCaml expression that
 constructs the `thm` instance whose conclusion is the goal and assumption is an empty list.
 
+For example, if we want to prove that `forall x. x + 1 = 1 + x` is true, we must write a proof
+that will help creation of a theorem instance which should be
+`` Sequent ([], `forall x. x + 1 = 1 + x`) ``.
+Of course, we can directly make this theorem object using `new_axiom`, but this might not be
+what we want.
+
+#### How does a typical HOL Light proof look like?
+
 HOL Light proofs are often written in a 'backward' style, which is, breaking a large goal into
 smaller, more tractable subgoals and attacking these.
+This is analogous to "To show that the goal is true, it is sufficient to prove this slightly
+simpler goal" in mathematics.
 When the subgoals become sufficiently small, they can be proven by simply applying existing
 lemma or even by other tactics that can directly discharge the subgoal.
+
 This 'backward-style' proof is different from a forward-style which is starting
 from the given assumptions and constructing intermediate theorems using
 inference rules.
+Note that, however, the backward style is not the only available option in HOL Light and
+one can also write it in a forward style.
+This document will introduce the backward style for brevity.
 
-There are two generic styles of backward-stype proofs in HOL Light. The first style is to
-interactively write proofs on OCaml REPL.
-This uses a subgoal package which contains several OCaml functions like `g` and `e`.
-Running these functions on OCaml REPL allows users to interactively set the goal term and
-prove step-by-step.
-`g` is an OCaml function that takes a term and sets it as a goal.
+#### Two proof-writing styles
+
+There are two widely used methods for writing backward-style proofs in HOL Light.
+The first style is to use a subgoal package which contains several OCaml functions like `g` and `e`.
+To help users to interactively see the 'current' proof state and write the next part of their
+proof, this method is supposed to be used on OCaml REPL.
+The second style is using a `prove` function.
+It takes a pair of (1) goal term, and (2) one large tactic that is supposed to prove the goal
+in one shot.
+
+
+<b>Using a subgoal package.</b>
+To start with, a function `g` is an OCaml function that takes a term and sets it as a goal.
+For example, on OCaml REPL (you can use `hol.sh` provided by HOL Light to launch OCaml REPL with
+the right configuration):
+
+```
+# g `forall x. x + 1 = 1 + x`;;
+val it : goalstack = 1 subgoal (1 total)
+
+`forall x. x + 1 = 1 + x`
+
+#
+```
+
 `e` is an OCaml function that receives a `tactic` OCaml instance and applies it to the current goal,
 refining it to a possibly smaller subgoal(s).
-In this proof-writing style, OCaml REPL is often used to type commands and read the next goal state.
 If writing proof is successfully finished, there must be no remaining subgoal.
+For the above example, we can simply use a `ARITH_TAC` tactic ([doc](https://hol-light.github.io/references/HTML/ARITH_TAC.html)) to immediately prove the goal.
+
+```
+# ARITH_TAC;;
+val it : tactic = <fun>
+
+# e ARITH_TAC;;
+val it : goalstack = No subgoals
+```
+
 Then, function `top_thm` will return the `thm` instance that represents the proven theorem.
 
+```
+# top_thm();;
+val it : thm = |- forall x. x + 1 = 1 + x
+```
+
+The automatically installed pretty printer of `thm` will use `|-` and show the list of assumptions
+on the left and its conclusion on the right, which are actually the two components of `Sequent`.
+
+<b>Using `prove`.</b>
 The second style is using a `prove` function.
 It takes a pair of (1) goal term, and (2) one large tactic that is supposed to prove the goal
 in one shot.
 If the tactic proves the goal, `prove` returns a new `thm` instance.
 Otherwise, it raises an exception.
+
+```
+# let my_theorem = prove(`forall x. x + 1 = 1 + x`, ARITH_TAC);;
+val my_theorem : thm = |- forall x. x + 1 = 1 + x
+```
+
 The one large tactic is typically a series of tactics concatenated with `THEN`, or a tree-structure
 of tactics concatenated with `THENL` if it creates multiple subgoals in the proof.
 
-The first style is convenient for writing a proof, it is verbose because it has to repeat
-`e(..)` and each `e` only applies to one of the subgoals.
-Also, in some cases, it is slower than `prove` because `e` checks validity of a tactic
+<b>Which style should I use?</b>
+The first style is convenient when you are actually writing a proof, because its style is
+interactive.
+However, you have to repeat `e(..)` and each `e` only applies to one of the subgoals.
+Also, in some cases, its running time is slower than `prove` because `e` checks validity of a tactic
 (`VAILD`, [link](https://hol-light.github.io/references/HTML/VALID.html)).
+A validity of a tactic will be explained in detail in [TacticDetails.md](TacticDetails.md).
 The second style is more succinct because (1) it omits `e(..)`, and (2) `t1 THEN t2` allows you to
 apply `t2` to all subgoals of `t1`.
 Also, it does not have to go through validity check.
@@ -123,7 +187,42 @@ then use an editor that supports automatic conversion of a selected text into th
 form and running it. hol-light plugin of VSCode supports this.
 
 
-## 2. Interesting facts
+## 2. Basic syntax and commands
+
+- `` `..` `` is a HOL Light term which is in fact `parse_term("..")` without the camlp5 preprocessor.
+- `` `:..` `` is a HOL Light type which is in fact `parse_type ("..")` without the camlp5 preprocessor.
+- `// ..` is an inline comment. This notation can be changed by a user by updating `comment_token`([doc](https://hol-light.github.io/references/HTML/comment_token.html)).
+
+### Expressions in HOL Light
+
+- Let binding: `` `let x = e in y` ``
+- If-then-else: `` `if c then e1 else e2` ``
+- Match expression: `` `match x with .. -> .. | .. -> ..` ``
+- True: `` `true` ``, (or succinctly) `` `T` `` / False: `` `false` ``, (or succinctly) `` `F` ``
+- Optional value: `` `NONE` ``, `` `SOME x` ``
+- List: `` `[]` ``, `` `[1;2;3]` ``, `` `CONS 1 (CONS 2 NIL)` ``
+- Universal quantification: `` `forall x. ..(x)..` ``, (or succinctly) `` `!x. ..(x)..` ``
+- Existential quantification: `` `exists x. ..(x)..` ``, (or succinctly) `` `?x. ..(x)..` ``
+- Uniqueness quantification: `` `existsunique x. ..(x)..` ``, (or succinctly) `` `?!x. ..(x)..` ``
+
+### Types in HOL Light
+
+- A natural number: `:num`
+- A symbolic type `A`: `` `:A` ``
+- An expression `e` which has type `A`: `` `e:A` ``
+- A natural number type: `` `:num` ``
+- A pair of `:num` type: `` `:num#num` ``
+- Optional `num`: `` `:num option` ``
+- Number list type: `` `:num list` ``
+- Bit-vector: `` `:8 word` `` (8-bit word), `` `:N word` ``
+
+### Commands (which are OCaml functions)
+
+- Define a function `f`: `` new_definition `(f:num->num) x = x + 1` `` ([doc](https://hol-light.github.io/references/HTML/new_definition.html))
+- Define an inductive data type: `` define_type `new_typename = .. | .. | ..` `` ([doc](https://hol-light.github.io/references/HTML/define_type.html))
+
+
+## 3. Interesting facts
 
 - Proposition is simply bool.
     - Truth has a bool type (`` type_of `T` `` is bool)
@@ -139,39 +238,6 @@ form and running it. hol-light plugin of VSCode supports this.
 - Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
 - `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
 
-## 3. Basic syntax and commands
-
-- `` `..` `` is a HOL Light term which is in fact `parse_term("..")` without the camlp5 preprocessor.
-- `` `:..` `` is a HOL Light type which is in fact `parse_type ("..")` without the camlp5 preprocessor.
-- `// ..` is an inline comment. This notation can be changed by a user by updating `comment_token`([doc](https://hol-light.github.io/references/HTML/comment_token.html)).
-
-### Expressions
-
-- Let binding: `let x = e in y`
-- If-then-else: `if c then e1 else e2`
-- Match expression: `match x with .. -> .. | .. -> ..`
-- True: `true`, (or succinctly) `T` / False: `false`, (or succinctly) `F`
-- Optional value: `NONE`, `SOME x`
-- List: `[]`, `[1;2;3]`, `CONS 1 (CONS 2 NIL)`
-- Universal quantification: `forall x. ..(x)..`, (or succinctly) `!x. ..(x)..`
-- Existential quantification: `exists x. ..(x)..`, (or succinctly) `?x. ..(x)..`
-- Uniqueness quantification: `existsunique x. ..(x)..`, (or succinctly) `?!x. ..(x)..`
-
-### Types
-
-- A symbolic type `A`: `` `:A` ``
-- An expression `e` which has type `A`: `` `e:A` ``
-- A natural number type: `` `:num` ``
-- A pair of `:num` type: `` `:num#num` ``
-- Optional `num`: `` `:num option` ``
-- Number list type: `` `:num list` ``
-- Bit-vector: `` `:8 word` `` (8-bit word), `` `:N word` ``
-
-### Commands (which are OCaml functions)
-
-- Define a function `f`: `` new_definition `(f:num->num) x = x + 1` ``
-- Define an inductive data type: `` define_type `new_typename = .. | .. | ..` `` ([doc](https://hol-light.github.io/references/HTML/define_type.html))
-
 
 ## 4. Q&As
 
@@ -186,8 +252,19 @@ Q: What are the benefits of using HOL Light?
   advanced tactics.
 - Has automated tactics that proves low-level theorems such as an equality between two bit-vector expressions.
 
-Q: Can I prove a property of OCaml function in HOL Light without embedding it in HOL Light?
+Q: Can I prove a property of an OCaml function in HOL Light without embedding it in HOL Light?
 - No.
+
+Q: It is cool that we can do theorem proving in OCaml, but I am not convinced whether there
+   can be a synergic effect between HOL Light and existing OCaml projects.
+- There can be a few examples, such as:
+- Using HOL Light to benefit OCaml projects: you can write a 'validator' in HOL Light
+  checking whether your calculation in OCaml is indeed correct. For example, the output
+  of a polynomial factorization function written in OCaml can be translated into
+  HOL Light terms and checked whether the original and factorized equations are logically same.
+  This is just a rough idea.
+- Improving OCaml that will benefit HOL Light: Any improvement in OCaml toolchain - compiler,
+  debugging tools, profiler, REPL updates, etc - will eventually improve HOL Light.
 
 Q: How can I make loading `hol.sh` faster?
 - To avoid repeating initialization, you can use a checkpointing program.
