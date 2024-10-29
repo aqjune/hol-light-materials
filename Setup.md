@@ -2,8 +2,17 @@
 
 ## 1. Building HOL Light
 
-Assuming that [OPAM](https://opam.ocaml.org/doc/Install.html) is installed in your machine,
-you can easily build HOL Light using the following instructions which are also described in [README](https://github.com/jrh13/hol-light/blob/master/README):
+Assuming that [OPAM](https://opam.ocaml.org/doc/Install.html) is installed in your machine, you can install HOL Light from OPAM.
+This will copy `hol.sh` to an executable path so that you can run `hol.sh` from anywhere.
+
+```
+opam install hol_light
+```
+
+Running `hol.sh` will launch an OCaml REPL with the kernel of HOL Light loaded, after
+lengthy message prints for a few minutes.
+
+Or, you can easily build HOL Light by yourself using the following instructions which are also described in [README](https://github.com/jrh13/hol-light/blob/master/README):
 
 ```
 git clone https://github.com/jrh13/hol-light.git
@@ -14,9 +23,6 @@ make
 # Now you have 'hol.sh' .
 ```
 
-This will launch an OCaml REPL with the kernel of HOL Light loaded, after
-lengthy message prints for a few minutes.
-
 ## 2. Setting up VSCode
 
 It is possible to just rely on `hol.sh` and a text editor to develop,
@@ -26,8 +32,8 @@ However, there is more ergonomic way to develop in HOL Light.
 As an editor, I recommend the [vscode-hol-light](https://github.com/monadius/vscode-hol-light) plugin ([marketplace](https://marketplace.visualstudio.com/items?itemName=monadius.hol-light-simple)).
 After installing it, you will want to:
 
-1. Configure `hol-light.path` to your cloned directory
-2. Associate `.ml` file extension with the HOL Light language, if you are planning to use the `.ml` extension for your HOL Light programs too.
+1. Configure `hol-light.path` to your HOL Light directory. If you built HOL Light by yourself, this will be simply the cloned directory. If you downloaded & installed HOL Light from OPAM, it will be `<your home dir>/.opam/<ocaml version>/lib/hol_light`.
+3. Associate `.ml` file extension with the HOL Light language, if you are planning to use the `.ml` extension for your HOL Light programs too.
 Note that this will disable using the original OCaml VSCode plugin for the files. The default extension is `.hl`.
 
 After this configuration, run `hol.sh` using `HOL Light: New HOL Light REPL Session` command in VSCode.
@@ -84,3 +90,8 @@ ports `-p <port number>`.
 Set the `HOLLIGHT_USE_MODULE` environment variable to 1 and recompile HOL Light using `make`.
 This will create `hol_lib.cma`.
 Please refer to the 'COMPILING HOL LIGHT' section of [README](https://github.com/jrh13/hol-light/blob/master/README).
+
+```
+# To compile the core module of HOL Light and use, add hol_light_module
+opam install hol_light hol_light_module
+```
