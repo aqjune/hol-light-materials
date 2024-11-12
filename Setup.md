@@ -23,6 +23,9 @@ make
 # Now you have 'hol.sh' .
 ```
 
+**s2n-bignum**. If you want to build s2n-bignum proofs, you will want HOL Light with module compilation turned on.
+Please see the 'Compiling HOL Light proofs' section below.
+
 ## 2. Setting up VSCode
 
 It is possible to just rely on `hol.sh` and a text editor to develop,
