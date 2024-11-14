@@ -91,10 +91,20 @@ ports `-p <port number>`.
 ## 4. Compiling HOL Light proofs
 
 Set the `HOLLIGHT_USE_MODULE` environment variable to 1 and recompile HOL Light using `make`.
-This will create `hol_lib.cma`.
+This will create `hol_lib.cma` and `hol_lib.cmxa`.
 Please refer to the 'COMPILING HOL LIGHT' section of [README](https://github.com/jrh13/hol-light/blob/master/README).
 
 ```
 # To compile the core module of HOL Light and use, add hol_light_module
 opam install hol_light hol_light_module
+```
+
+If you are using Mac OS and installed OCaml using Homebrew, you might face a linker failure problem like this:
+```
+ld: library 'gmp' not found
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+```
+Updating `LIBRARY_PATH` to point to the path can resolve this problem.
+```
+export LIBRARY_PATH=/opt/homebrew/lib/:$LIBRARY_PATH
 ```
