@@ -108,6 +108,8 @@ is equivalent to:
 ```ocaml
 _MATCH x (\y out. _UNGUARDED_PATTERN (GEQ 1 y) (GEQ T out))
 ```
+Note that a match clause is a lambda function receiving two arguments: one for input (`y`) and one for output (`out`).
+The lambda function returns bool which is the equality between `out` and the actual output value (`T`).
 
 ```ocaml
 `match (x:num) with 1 -> SOME T | 2 -> NONE`;;
@@ -119,3 +121,44 @@ _MATCH x (_SEQPATTERN
     (\y1 out1. _UNGUARDED_PATTERN (GEQ 1 y1) (GEQ (SOME T) out1))
     (\y2 out2. _UNGUARDED_PATTERN (GEQ 2 y2) (GEQ NONE out2)))
 ```
+
+### `bitmatch`
+
+```ocaml
+`bitmatch (b:(2)word) with
+| [0b1:1; x:1] -> (result_a:A)
+| _ -> (result_b:A)`;;
+```
+
+is equivalent to:
+```ocaml
+Comb
+ (Comb (Const ("_BITMATCH", `:(2)word->(num->A->bool)->A`),
+   Var ("b", `:(2)word`)),
+ Comb
+  (Comb
+    (Const ("_SEQPATTERN", `:(num->A->bool)->(num->A->bool)->num->A->bool`),
+    Abs (Var ("BM%PVAR%60", `:num`),
+     Abs (Var ("BM%PVAR%61", `:A`),
+      Comb (Const ("?", `:((1)word->bool)->bool`),
+       Abs (Var ("x", `:(1)word`),
+        Comb
+         (Comb (Const ("_UNGUARDED_PATTERN", `:bool->bool->bool`),
+           Comb
+            (Comb (Const ("pat_set", `:bitpat->num->bool`),
+              Comb
+               (Comb (Const ("CONSPAT", `:bitpat->(1)word->bitpat`),
+                 Comb
+                  (Comb (Const ("CONSPAT", `:bitpat->(1)word->bitpat`),
+                    Const ("NILPAT", `:bitpat`)),
+                  Comb (Const ("word", `:num->(1)word`),
+                   Comb (Const ("NUMERAL", `:num->num`),
+                    Comb (Const ("BIT1", `:num->num`), Const ("_0", `:num`)))))),
+               Var ("x", `:(1)word`))),
+            Var ("BM%PVAR%60", `:num`))),
+         Comb (Comb (Const ("=", `:A->A->bool`), Var ("result_a", `:A`)),
+          Var ("BM%PVAR%61", `:A`)))))))),
+  Comb (Const ("_ELSEPATTERN", `:A->num->A->bool`), Var ("result_b", `:A`))))
+```
+
+It has a structure that is analogous to `match`, but has `pat_set` which is a list of bit patterns (composed of `CONSPAT` and `NILPAT`).
