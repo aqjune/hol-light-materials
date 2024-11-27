@@ -162,3 +162,27 @@ Comb
 ```
 
 It has a structure that is analogous to `match`, but has `pat_set` which is a list of bit patterns (composed of `CONSPAT` and `NILPAT`).
+
+### Generalized abstraction
+
+```ocaml
+`\(x,y).x+y`;;
+```
+
+is:
+
+```ocaml
+Comb (Const ("GABS", `:((num#num->num)->bool)->num#num->num`),
+ Abs (Var ("f", `:num#num->num`),
+  Comb (Const ("!", `:(num->bool)->bool`),
+   Abs (Var ("x", `:num`),
+    Comb (Const ("!", `:(num->bool)->bool`),
+     Abs (Var ("y", `:num`),
+      Comb
+       (Comb (Const ("GEQ", `:num->num->bool`),
+         Comb (Var ("f", `:num#num->num`),
+          Comb (Comb (Const (",", `:num->num->num#num`), Var ("x", `:num`)),
+           Var ("y", `:num`)))),
+       Comb (Comb (Const ("+", `:num->num->num`), Var ("x", `:num`)),
+        Var ("y", `:num`)))))))))
+```
