@@ -22,7 +22,7 @@
 ### 3. Examples and Exercises
 
 - [exercises](exercises): exercises for HOL Light
-- [s2n-bignum-examples](s2n-bignum-examples): examples for proving assembly programs in s2n-bignum
+- s2n-bignum tutorial at https://github.com/awslabs/s2n-bignum/tree/main/arm/tutorial
 
 ### 4. Other Online Materials
 
