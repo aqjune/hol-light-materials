@@ -155,6 +155,13 @@ use `dest_small_number`([doc](https://hol-light.github.io/references/HTML/dest_s
 
 `CHANGED_TAC t` is a tactic that fails if tactic `t` did not change the goal state.
 
+### Choosing an assumption that meets a condition
+
+You can use `check` to find an assumption
+
+```
+FIRST_X_ASSUM (MP_TAC o (check (is_exists o concl)))
+```
 
 ### Dealing with subgoals
 

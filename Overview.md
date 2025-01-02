@@ -236,7 +236,10 @@ form and running it. hol-light plugin of VSCode supports this.
     - See also: [new_type_definition](https://github.com/jrh13/hol-light/blob/master/Help/new_type_definition.hlp)
     - This allows you to prove `exists x y. x = y`!
 - Uses a simply typed lambda calculus. (See [TYPE.md](TYPE.md))
+- There is no definitional equality because definition is simply an equality. :) Every equality is born equal.
 - `match` does not have to be a total function; conversion will fail if there is no matching pattern instead.
+- Using `new_specification`, you can define a constant whose definition is not explicitly given but satisfies some constraint.
+- Generalized abstraction is defined using Axiom of Choice (the `@` operator). See `GABS`.
 
 
 ## 4. Q&As
