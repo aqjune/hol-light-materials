@@ -92,7 +92,17 @@ ports `-p <port number>`.
 
 Set the `HOLLIGHT_USE_MODULE` environment variable to 1 and recompile HOL Light using `make`.
 This will create `hol_lib.cma` and `hol_lib.cmxa`.
+
+```
+export HOLLIGHT_USE_MODULE=1
+make
+# Now you have 'hol.sh', 'hol_lib.cma' and 'hol_lib.cmxa'.
+```
+
+This will exactly be what is necessary to build s2n-bignum proofs (`make proofs` from s2n-bignum).
 Please refer to the 'COMPILING HOL LIGHT' section of [README](https://github.com/jrh13/hol-light/blob/master/README).
+
+If you want to install hol light from OPAM:
 
 ```
 # To compile the core module of HOL Light and use, add hol_light_module
