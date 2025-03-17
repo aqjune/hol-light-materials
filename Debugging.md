@@ -90,6 +90,15 @@ other than using `e(PRINT_GOAL_TAC)` you can also use:
 # print_goal (top_realgoal());;
 ```
 
+<b>Conversions.</b>
+For conversions, you can use `PRINT_TERM_CONV`.
+
+### Printing a message
+
+You can use `REMARK_TAC "mymessage"` to simply print the message when the tactic is to be executed.
+
+If the global variable `verbose := false;;` is set, `REMARK_TAC` will not print any string.
+
 <b>Timing of printing.</b> Let's assume that you want to use `Printf.printf` to figure out which tactic is failing.
 It will be tempting to write
 ```ocaml
@@ -103,6 +112,14 @@ let my_proof = prove(`...`,
 but this won't work because it will always print the whole messages successfully.
 This is because function arguments are always eagerly evaluated in OCaml.
 So, messages will have been already printed before the `prove` function is invoked.
+
+### Measuring the running time of a tactic
+
+You can use `time (.. my tactic)` to print the elapsed time of the tactic.
+
+If your tactic receives an additional argument, say `REWRITE_TAC [my_rules]`, don't forget to
+wrap the whole expression with parentheses, `time (REWRITE_TAC [my_rules])`, otherwise it will
+only measure the time of applying `[my_rules]` to `REWRITE_TAC` which will be instantaneous.
 
 
 ## 3. Printing terms, types and theorems
