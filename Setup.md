@@ -36,14 +36,24 @@ As an editor, I recommend the [vscode-hol-light](https://github.com/monadius/vsc
 After installing it, you will want to:
 
 1. Configure `hol-light.path` to your HOL Light directory. If you built HOL Light by yourself, this will be simply the cloned directory. If you downloaded & installed HOL Light from OPAM, it will be `<your home dir>/.opam/<ocaml version>/lib/hol_light`.
-3. Associate `.ml` file extension with the HOL Light language, if you are planning to use the `.ml` extension for your HOL Light programs too.
-Note that this will disable using the original OCaml VSCode plugin for the files. The default extension is `.hl`.
+3. Associate `.ml` file extension with the HOL Light language, if you are planning to use the `.ml` file extension for your HOL Light programs too.
+Note that this will disable using the original OCaml VSCode plugin for the files. The default file extension is `.hl`. You can find
+the `Associate .ml Files with HOL Light` command.
 
 After this configuration, run `hol.sh` using `HOL Light: New HOL Light REPL Session` command in VSCode.
 After the script is loaded, you can send one statement (or selected statement) to `hol.sh` and develop code interactively.
 
 The README.md file as well as description in its Marketplace webpage
 has more information.
+
+**If loading `hol.sh` shows an error about the OCaml version and `findlib.cma`..**
+If you configured HOL Light using `make switch` (or `make switch-5`), this can be due to a conflicting setting between
+the local OPAM setting inside the HOL Light directory and the global OPAM switch setting.
+If the initial OPAM installation inserted the following initialization script to `.zshrc` or `.bashrc` such as:
+```
+[[ ! -r '/Users/rodchap/.opam/opam-init/init.zsh' ]] || source '/Users/rodchap/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+```
+Please remove this line and try running `hol.sh` again.
 
 ### Using HOL Light Server to improve experience
 
