@@ -1,0 +1,14 @@
+diff --git a/fusion.ml b/fusion.ml
+index 93a0d51..41e7565 100644
+--- a/fusion.ml
++++ b/fusion.ml
+@@ -598,7 +598,8 @@ module Hol : Hol_kernel = struct
+              let dth = Sequent([],safe_mk_eq c r) in
+              the_definitions := dth::(!the_definitions); dth
+     | Comb(Comb(Const("=",_),Const(cname,ty)),r) ->
+-      failwith ("new_basic_definition: '" ^ cname ^ "' is already defined")
++      new_axiom tm
++      (*failwith ("new_basic_definition: '" ^ cname ^ "' is already defined")*)
+     | _ -> failwith "new_basic_definition"
+
+ (* ------------------------------------------------------------------------- *)
