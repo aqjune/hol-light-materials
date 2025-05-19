@@ -51,9 +51,12 @@ If you configured HOL Light using `make switch` (or `make switch-5`), this can b
 the local OPAM setting inside the HOL Light directory and the global OPAM switch setting.
 If the initial OPAM installation inserted the following initialization script to `.zshrc` or `.bashrc` such as:
 ```
-[[ ! -r '/Users/rodchap/.opam/opam-init/init.zsh' ]] || source '/Users/rodchap/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+[[ ! -r '/Users/xx/.opam/opam-init/init.zsh' ]] || source '/Users/xx/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 ```
 Please remove this line and try running `hol.sh` again.
+
+**If it says `ledit` cannot be found**
+On Mac, `ledit` might not be found from PATHs even after installed. In this case, please rely on `brew install ledit`.
 
 ### Using HOL Light Server to improve experience
 
