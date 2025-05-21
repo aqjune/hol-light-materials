@@ -249,8 +249,33 @@ val it : thm =
      [3; 4; 5]
 ```
 
+## 5. Lists
 
-## 5. Inductive data type
+To simplify `EL i list` to `list[i]`, `EL_CONV` ([doc](https://hol-light.github.io/references/HTML/EL_CONV.html)) can be used:
+
+```
+# EL_CONV `EL 4 [1;2;3;4;5]`;;
+val it : thm = |- EL 4 [1; 2; 3; 4; 5] = 5
+```
+
+`LENGTH_CONV` ([doc](https://hol-light.github.io/references/HTML/LENGTH_CONV.html)) reduces `LENGTH l` to its length:
+
+```
+# LENGTH_CONV `LENGTH [1;2;3;4;5]`;;
+val it : thm = |- LENGTH [1; 2; 3; 4; 5] = 5
+```
+
+There are `LIST_OF_SEQ_CONV` ([doc](https://hol-light.github.io/references/HTML/LIST_OF_SEQ_CONV.html)) and `REVERSE_CONV` ([doc](https://hol-light.github.io/references/HTML/REVERSE_CONV.html)) as well.
+
+`LIST_CONV f_conv t` is a generic conversion that receives a term `t` which is a type of `:(A)list` and a conversion `f_conv` and
+applies `f_conv` to every element ([doc](https://hol-light.github.io/references/HTML/LIST_CONV.html)).
+
+```
+# LIST_CONV num_CONV `[1;2;3;4;5]`;;
+val it : thm = |- [1; 2; 3; 4; 5] = [SUC 0; SUC 1; SUC 2; SUC 3; SUC 4]
+```
+
+## 6. Inductive data type
 
 `distinctness` ([doc](https://hol-light.github.io/references/HTML/distinctness.html))
 and `injectivity` ([doc](https://hol-light.github.io/references/HTML/injectivity.html))
@@ -272,7 +297,7 @@ val it : thm =
           NODE a0 a1 = NODE a0' a1' <=> a0 = a0' /\ a1 = a1')
 ```
 
-## 6. Composing multiple conversions
+## 7. Composing multiple conversions
 
 How can we compute an expression that has both function application and
 numerical expression, e.g., `(\x. x + 1) 2` to `3`?
@@ -299,7 +324,7 @@ or `DEPTH_CONV` ([doc](https://hol-light.github.io/references/HTML/DEPTH_CONV.ht
 to make e.g., `BETA_CONV` visit subexpressions.
 
 
-## 7. Building a call-by-value evaluator using the `Compute` module
+## 8. Building a call-by-value evaluator using the `Compute` module
 
 Writing a custom evaluator by composing multiple conversions as previously described
 has a limitation.
@@ -350,6 +375,8 @@ val my_conv : Hol_lib.term -> Hol_lib.thm = <fun>
 # my_conv `my_add 20 30`;;
 - : thm = |- my_add 20 30 = word 60
 ```
+
+Instead of `Compute.bool_compset` you can also use `Compute.basic_compset` which has all `basic_convs` ([doc](https://hol-light.github.io/references/HTML/basic_convs.html)) and `basic_rewrites` ([doc](https://hol-light.github.io/references/HTML/basic_rewrites.html)) added.
 
 `Compute.WEAK_CBV_CONV` receives a Compset and returns a conversion that
 does call-by-value evaluation.
