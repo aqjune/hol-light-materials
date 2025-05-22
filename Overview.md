@@ -258,8 +258,8 @@ Q: What are the benefits of using HOL Light?
 - Its small core provides a transparent view about how things are working in OCaml.
   This is especially important when you are dealing with large proofs and understanding why
   the proof checking is slow is necessary.
-  Also, you can use optimized OCaml library/compilers as well.
-- Writing a tactic is really writing a simple OCaml function. You can quickly learn how to learn very
+- For speed, you can use optimized OCaml library/compilers. Also, you can use the debugging facilities of OCaml.
+- Writing a tactic is really writing a simple OCaml function. You can quickly learn how to write very
   advanced tactics.
 - Has automated tactics that proves low-level theorems such as an equality between two bit-vector expressions.
 
