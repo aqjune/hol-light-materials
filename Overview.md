@@ -227,6 +227,14 @@ form and running it. hol-light plugin of VSCode supports this.
 - Proposition is simply bool.
     - Truth has a bool type (`` type_of `T` `` is bool)
     - `TAUT` allows excluded middle. Double negation elimination (`~~P -> P`) is allowed
+- Then what is type `bool`?
+    - It isn't an inductive data type having `` `T` `` (`` `true` `` in the modern syntax) and `` `F` `` (`` `false` `` in the modern syntax) as constructors.
+    - It is just a primitive type that exists from the very foundation of HOL Light; it does not explicitly have its 'elements'.
+    - It is (1) the definition of equality `` `(=):A->A->bool` `` and (2) axioms around `` `=` `` that eventually gives a meaning to type `bool`.
+    - Truth `T` is defined as: `` `T = ((\p:bool. p) = (\p:bool. p))` `` (`T_DEF`)
+    - Universal quantifier `` `!` `` is defined as: `` `\P:A->bool. P = \x. T` `` (`FORALL_DEF`)
+    - False `F` is defined as: `` `!p:bool. p` `` (`F_DEF`)
+    - It is interesting to see that `F` is defined upon `!` which is defined upon `T` :)
 - Allows functional extensionality.
 - Unbound variables are considered as universally quantified variables
     - ex) Goal `x + 0 = x` is valid, and it means `forall x. x + 0 = x` (or more briefly, `!x. x + 0 = x`)
