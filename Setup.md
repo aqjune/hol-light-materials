@@ -75,16 +75,21 @@ The true power of HOL Light Server is that it enable you to remotely access to a
 It removes inconvenience of restarting `hol.sh` after network connection is down.
 This is very convenient if you are working remotly from a server and using SSH connection in VSCode.
 
-In order to use this feature, clone this repo in your HOL Light directory: https://github.com/monadius/hol_server
-and compile it using `make`. After this, run these statements on `hol.sh`. This will bind port 30000
+In order to use this feature, clone this repo in your HOL Light directory:
+
+```
+git clone https://github.com/monadius/hol_server --branch vscode
+# You don't need to run 'make'.
+```
+
+After this, run these statements on `hol.sh`. This will bind port 30000
 to the server.
 
 ```
 #directory "+threads";;
 #load "unix.cma";;
 #load "threads.cma";;
-#directory "hol_server";;
-#load "server2.cmo";;
+#mod_use "{path to the server}/server2.ml";;
 Server2.start 30000;;
 ```
 
