@@ -280,3 +280,4 @@ Q: It is cool that we can do theorem proving in OCaml, but I am not convinced wh
 Q: How can I make loading `hol.sh` faster?
 - To avoid repeating initialization, you can use a checkpointing program.
   I recommend DMTCP, but there are CRIU and selfie as well (the README of HOL Light has instructions).
+  The latest HOL Light can create a checkpointed image if DMTCP is installed, either through `make hol`, or `make-checkpoint.sh`.
