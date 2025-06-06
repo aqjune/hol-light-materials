@@ -57,6 +57,9 @@ Please remove this line and try running `hol.sh` again.
 
 **If it says `ledit` cannot be found**
 On Mac, `ledit` might not be found from PATHs even after installed. In this case, please rely on `brew install ledit`.
+If your distribution cannot find `ledit`, you can proceed `export LINE_EDITOR=" "` on the terminal and rerun `hol.sh`.
+This will introduce some inconveniences (for example, arrow keys will not work), but if actual source code editing
+will be done on a separate place like VSCode then it won't matter.
 
 ### Using HOL Light Server to improve experience
 
