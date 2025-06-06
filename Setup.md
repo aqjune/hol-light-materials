@@ -26,6 +26,12 @@ make
 **s2n-bignum**. If you want to build s2n-bignum proofs, you will want the HOL Light cloned from Github, with module compilation turned on.
 Please see the 'Compiling HOL Light proofs' section below.
 
+**If loading `hol.sh` says `ledit` cannot be found**
+On Mac, `ledit` might not be found from PATHs even after installed. In this case, please rely on `brew install ledit`.
+If your distribution cannot find `ledit`, you can proceed `export LINE_EDITOR=" "` on the terminal and rerun `hol.sh`.
+This will introduce some inconveniences (for example, arrow keys will not work), but if actual source code editing
+will be done on a separate place like VSCode then it won't matter.
+
 ## 2. Setting up VSCode
 
 It is possible to just rely on `hol.sh` and a text editor to develop,
@@ -54,12 +60,6 @@ If the initial OPAM installation inserted the following initialization script to
 [[ ! -r '/Users/xx/.opam/opam-init/init.zsh' ]] || source '/Users/xx/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 ```
 Please remove this line and try running `hol.sh` again.
-
-**If it says `ledit` cannot be found**
-On Mac, `ledit` might not be found from PATHs even after installed. In this case, please rely on `brew install ledit`.
-If your distribution cannot find `ledit`, you can proceed `export LINE_EDITOR=" "` on the terminal and rerun `hol.sh`.
-This will introduce some inconveniences (for example, arrow keys will not work), but if actual source code editing
-will be done on a separate place like VSCode then it won't matter.
 
 ### Using HOL Light Server to improve experience
 
