@@ -72,6 +72,8 @@ This command will quickly launch HOL Light Server on the currently loaded `hol.s
 interaction mode via this server.
 This does not need separately downloading the server from your side because vscode-hol-light already has it.
 
+![Screenshot](screenshot.PNG)
+
 ### Remotely connecting to `hol.sh`
 
 The true power of HOL Light Server is that it enable you to remotely access to an already running `hol.sh`.
