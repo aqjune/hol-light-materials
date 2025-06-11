@@ -1,4 +1,4 @@
-# HOL Light vs. Coq
+# HOL Light vs. Rocq (Coq)
 
 ## Tactics in HOL Light vs. Coq
 
