@@ -111,6 +111,12 @@ Once `dmtcp_restart_script.sh` is created, you can run the script to reload `hol
 You can create multiple instances of loaded HOL Light processes by starting the script with distinct
 ports `-p <port number>`.
 
+The latest HOL Light provides `make-checkpoint.sh`. You can use, e.g., `make-checkpoint.sh my-ckpt.sh`.
+This also requires DMTCP.
+`make-checkpoint.sh` takes an optional second argument which is the statement to execute.
+For example, `make-checkpoint.sh my-ckpt.sh 'loads "Multivariate/make.ml"'` will load the Multivariate
+library and checkpoint.
+
 ## 4. Compiling HOL Light proofs
 
 Set the `HOLLIGHT_USE_MODULE` environment variable to 1 and recompile HOL Light using `make`.
