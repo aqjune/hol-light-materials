@@ -100,6 +100,13 @@ Server2.start 30000;;
 
 Now `vscode-hol-light` can connect to this server with port 30000.
 
+**When HOL Light server becomes unusable after network disconnection.**
+If the network between your local laptop (where VSCode runs) and the remote machine
+is disconnected, it is normal for the HOL Light Server to print `[STOP] Connection closed`,
+but sometimes the server thinks its connection is still valid and refuse to establish any
+further connection, making the server unusable.
+In this case, type "stop" on the terminal where HOL Light Server was running.
+It will force HOL Light Server to disconnect & be ready for the next connection.
 
 ## 3. Checkpointing
 
