@@ -76,36 +76,37 @@ This does not need separately downloading the server from your side because vsco
 
 ### Remotely connecting to `hol.sh`
 
-The true power of HOL Light Server is that it enable you to remotely access to an already running `hol.sh`.
-It removes inconvenience of restarting `hol.sh` after network connection is down.
-This is very convenient if you are working remotly from a server and using SSH connection in VSCode.
+The true power of HOL Light Server is that it enable you to remotely access to an already running `hol.sh` in a remote server.
+This is very convenient if you are working remotely from a powerful server, using SSH connection in VSCode.
 
-In order to use this feature, clone this repo in your HOL Light directory:
+In order to use this feature, clone this repo into your HOL Light directory or any working directory (e.g., s2n-bignum):
 
 ```
 git clone https://github.com/monadius/hol_server --branch vscode
 # You don't need to run 'make'.
 ```
 
-After this, run these statements on `hol.sh`. This will bind port 30000
-to the server.
+Let's assume that you already have `run.sh` running on a bash(or zsh or any) terminal of a remote machine.
+Run these statements on the terminal. This will reserve port 30000 for the HOL server.
 
 ```
 #directory "+threads";;
 #load "unix.cma";;
 #load "threads.cma";;
 #mod_use "{path to the server}/server2.ml";;
+#mod_use "{path to the server}/hol_light_json.ml";;
 Server2.start 30000;;
 ```
 
-Now `vscode-hol-light` can connect to this server with port 30000.
+In VSCode, open a Command Palette and run "HOL Light: Connect to Server" with address `localhost:30000`.
+Now the VSCode HOL Light plugin can connect to this server with port 30000.
 
 **When HOL Light server becomes unusable after network disconnection.**
 If the network between your local laptop (where VSCode runs) and the remote machine
-is disconnected, it is normal for the HOL Light Server to print `[STOP] Connection closed`,
-but sometimes the server thinks its connection is still valid and refuse to establish any
+is disconnected, it is normal for the HOL Light Server to print `[STOP] Connection closed`.
+However, the server sometimes thinks its connection is still live and refuse to establish any
 further connection, making the server unusable.
-In this case, type "stop" on the terminal where HOL Light Server was running.
+In this case, simply type "stop" on the terminal where HOL Light Server was running.
 It will force HOL Light Server to disconnect & be ready for the next connection.
 
 ## 3. Checkpointing
