@@ -67,7 +67,10 @@ Simply using the `hol.sh` in VSCode after following the above instructions has a
 First, it cannot identify whether the statement sent to `hol.sh` failed or not.
 Second, it lacks error message coloring and sometimes has a broken format on its input.
 
-You can enable these features by using a command 'Start Server' in vscode-hol-light.
+You can enable these features by using a command 'Start Server' in vscode-hol-light:
+
+<img src="screenshot-startserver.PNG" alt="screenshot" width="500"/>
+
 This command will quickly launch HOL Light Server on the currently loaded `hol.sh`, and start
 interaction mode via this server.
 This does not need separately downloading the server from your side because vscode-hol-light already has it.
