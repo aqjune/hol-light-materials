@@ -90,7 +90,8 @@ git clone https://github.com/monadius/hol_server --branch vscode
 ```
 
 Let's assume that you already have `run.sh` running on a bash(or zsh or any) terminal of a remote machine.
-Run these statements on the terminal. This will reserve port 30000 for the HOL server.
+Run these statements on the terminal. This will reserve port 30000 for the HOL server. `{path to the server}` is the
+path to the `hol_server` directory.
 
 ```
 #directory "+threads";;
