@@ -1,0 +1,21 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+set ckpt  [lindex $argv 0]
+
+spawn $ckpt
+
+expect "HOL Light (checkpointed"
+
+# Launch the server.
+send "#directory \"+threads\";;\r\n"
+send "#load \"unix.cma\";;\r\n"
+send "#load \"threads.cma\";;\r\n"
+send "#mod_use \"hol_server/server2.ml\";;\r\n"
+send "#mod_use \"hol_server/hol_light_json.ml\";;\r\n"
+send "Server2.start 30000;;\r\n"
+
+# Quit cleanly
+send "#quit;;\r"
+expect eof

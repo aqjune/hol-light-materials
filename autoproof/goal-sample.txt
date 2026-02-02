@@ -1,0 +1,1 @@
+Theorem: multiplication of two 64-bit vectors equals splitting each 64-bit vector into two high and low 32-bit vectors, multiplying each arm, and adding together with shifts.
