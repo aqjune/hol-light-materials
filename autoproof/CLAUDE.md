@@ -41,7 +41,7 @@
 - Even more information in QUICK_REFERENCE.txt - you can grep it too.
 - The 'Help/' directory in HOL Light contains many useful documents for available tactics and conversions.
 - A lot of related definitions and lemmas are in Library/words.ml - grep it often for existing defs and theorems.
-- The 'autoproof/../materials/' directory contains markdown files that has descriptions about important concepts and how to deal with certain kinds of problems in HOL Light.
+- The 'autoproof/parentdir' directory contains markdown files that has descriptions about important concepts and how to deal with certain kinds of problems in HOL Light.
 - You can/should also search for useful lemmas in the whole library, these are files such as sets.ml, real.ml, the whole Library directories, etc.
 
 ### Use the `search` command
@@ -63,7 +63,7 @@ g `(x + 2) * y = x * y + 2 * y`;;
 will set up a new goal that you will want to prove.
 To send this command, store this command at `scratchpad.txt`, and run
 ```
-python3 hol-light-autoproof/hol_client.py localhost:30000 scratchpad.txt
+python3 autoproof/hol_client.py localhost:30000 scratchpad.txt
 ```
 This will print the standard output from HOL Light REPL in the JSON format.
 - You can apply a tactic through the `e` command. For example, storing
