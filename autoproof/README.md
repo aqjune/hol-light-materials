@@ -36,9 +36,10 @@ expect autoproof/run-hol-server.exp ./ckpt.sh
 
 Step 4. Open another terminal, go to `$HOLLIGHT_DIR`, make a soft link to this autoproof directory as a subdirectory.
 
-Step 5. Copy CLAUDE.md from this directory to HOL Light. Also, write to goal.txt your goal of interest in English, and start claude! A sample goal is at goal-sample.txt in this directory. The output of Opus from the sample goal is at work-sample.txt!
+Step 5. Copy INSTRUCTION.md from this directory to your workspace directory (e.g., s2n-bignum). Then, start your best agent (Kiro, Claude, etc)! A sample goal is at goal-sample.txt in this directory. The output of Opus from the sample goal is at work-sample.txt!
 
 ```
 (Launch Claude Code or kiro-cli, and run the following command)
-Reread CLAUDE.md and start the task
+Read INSTRUCTION.md and start the task. Could 
+Theorem: multiplication of two 64-bit vectors equals splitting each 64-bit vector into two high and low 32-bit vectors, multiplying each arm, and adding together with shifts.
 ```
