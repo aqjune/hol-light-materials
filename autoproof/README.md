@@ -14,6 +14,7 @@ pwd
 # /home/ubuntu/s2n-bignum
 ln -s <your hol-light-material>/autoproof ./autoproof
 ```
+(note: Kiro-cli might deny following the symbolic link. In this case, simply copy the contents of autoproof to the location.)
 
 Step 1. Build a checkpointed binary of HOL Light.
 
