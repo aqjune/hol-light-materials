@@ -8,6 +8,13 @@ Dependencies:
   * Claude Code, possibly connected to your Amazon Bedrock and model set to Opus 4.5. See also: https://code.claude.com/docs/en/amazon-bedrock
   * `kiro-cli` also works well with Opus 4.5
 
+Step 0. In your work directory (e.g., hol-light, s2n-bignum, or anything else) create a symbolic link to this 'autoproof' directory:
+```bash
+pwd
+# /home/ubuntu/s2n-bignum
+ln -s <your hol-light-material>/autoproof ./autoproof
+```
+
 Step 1. Build a checkpointed binary of HOL Light.
 
 ```bash
@@ -24,7 +31,7 @@ git clone https://github.com/monadius/hol_server.git --branch vscode
 Step 3. Run the server
 
 ```
-expect run-hol-server.exp ./ckpt.sh
+expect autoproof/run-hol-server.exp ./ckpt.sh
 ```
 
 Step 4. Open another terminal, go to `$HOLLIGHT_DIR`, make a soft link to this autoproof directory as a subdirectory.
